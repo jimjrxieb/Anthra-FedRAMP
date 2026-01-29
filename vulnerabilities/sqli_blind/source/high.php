@@ -8,7 +8,10 @@ if( isset( $_COOKIE[ 'id' ] ) ) {
 	switch ($_DVWA['SQLI_DB']) {
 		case MYSQL:
 			// Check database
-			$query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1;";
+			$stmt = $mysqli->prepare("SELECT first_name, last_name FROM users WHERE user_id = ? LIMIT 1");
+			$stmt->bind_param("i", $id);
+			$stmt->execute();
+			$query = $stmt->get_result();
 			try {
 				$result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ); // Removed 'or die' to suppress mysql errors
 			} catch (Exception $e) {
@@ -30,7 +33,10 @@ if( isset( $_COOKIE[ 'id' ] ) ) {
 		case SQLITE:
 			global $sqlite_db_connection;
 
-			$query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id' LIMIT 1;";
+			$stmt = $mysqli->prepare("SELECT first_name, last_name FROM users WHERE user_id = ? LIMIT 1");
+			$stmt->bind_param("i", $id);
+			$stmt->execute();
+			$query = $stmt->get_result();
 			try {
 				$results = $sqlite_db_connection->query($query);
 				$row = $results->fetchArray();

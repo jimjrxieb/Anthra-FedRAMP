@@ -11,19 +11,44 @@ $page[ 'title' ] = 'Source' . $page[ 'title_separator' ].$page[ 'title' ];
 if (array_key_exists ("id", $_GET)) {
 	$id = $_GET[ 'id' ];
 
-	$lowsrc = @file_get_contents("./{$id}/source/low.php");
+	$id = basename($id);
+	if (!preg_match('/^[a-zA-Z0-9_-]+$/', $id)) {
+		$lowsrc = false;
+	} else {
+		$lowsrc = @file_get_contents("./{$id}/source/low.php");
+	}
 	$lowsrc = str_replace( array( '$html .=' ), array( 'echo' ), $lowsrc);
 	$lowsrc = highlight_string( $lowsrc, true );
 
-	$medsrc = @file_get_contents("./{$id}/source/medium.php");
+	$id = basename($id);
+	if (!preg_match('/^[a-zA-Z0-9_-]+$/', $id)) {
+		$medsrc = false;
+	} else {
+		$medsrc = @file_get_contents("./{$id}/source/medium.php");
+	}
 	$medsrc = str_replace( array( '$html .=' ), array( 'echo' ), $medsrc);
 	$medsrc = highlight_string( $medsrc, true );
 
-	$highsrc = @file_get_contents("./{$id}/source/high.php");
+	$id = preg_replace('/[^a-zA-Z0-9_-]/', '', $id);
+	if (empty($id)) {
+		$highsrc = false;
+	} else {
+		$filepath = realpath("./{$id}/source/high.php");
+		if ($filepath && strpos($filepath, realpath('.')) === 0) {
+			$highsrc = @file_get_contents($filepath);
+		} else {
+			$highsrc = false;
+		}
+	}
 	$highsrc = str_replace( array( '$html .=' ), array( 'echo' ), $highsrc);
 	$highsrc = highlight_string( $highsrc, true );
 
-	$impsrc = @file_get_contents("./{$id}/source/impossible.php");
+	$id = basename($id);
+	if (!preg_match('/^[a-zA-Z0-9_-]+$/', $id)) {
+		$impsrc = false;
+	} else {
+		$impsrc = @file_get_contents("./{$id}/source/impossible.php");
+	}
 	$impsrc = str_replace( array( '$html .=' ), array( 'echo' ), $impsrc);
 	$impsrc = highlight_string( $impsrc, true );
 

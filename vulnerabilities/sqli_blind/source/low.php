@@ -8,7 +8,10 @@ if( isset( $_GET[ 'Submit' ] ) ) {
 	switch ($_DVWA['SQLI_DB']) {
 		case MYSQL:
 			// Check database
-			$query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id';";
+			$stmt = $mysqli->prepare("SELECT first_name, last_name FROM users WHERE user_id = ?");
+			$stmt->bind_param("i", $id);
+			$stmt->execute();
+			$query = $stmt->get_result();
 			try {
 				$result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ); // Removed 'or die' to suppress mysql errors
 			} catch (Exception $e) {
@@ -29,7 +32,10 @@ if( isset( $_GET[ 'Submit' ] ) ) {
 		case SQLITE:
 			global $sqlite_db_connection;
 
-			$query  = "SELECT first_name, last_name FROM users WHERE user_id = '$id';";
+			$stmt = $mysqli->prepare("SELECT first_name, last_name FROM users WHERE user_id = ?");
+			$stmt->bind_param("i", $id);
+			$stmt->execute();
+			$query = $stmt->get_result();
 			try {
 				$results = $sqlite_db_connection->query($query);
 				$row = $results->fetchArray();

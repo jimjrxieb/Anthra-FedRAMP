@@ -89,7 +89,7 @@ print "\n";
 print "Converted to a JSON object:\n";
 var_dump ($user);
 
-if ($user->user == "sweep" && $user->ex > time() && $user->level == "admin") {
+if ($user->user === "sweep" && $user->ex > time() && $user->level === "admin") {
 	print "Welcome administrator Sweep\n";
 } else {
 	print "Failed\n";

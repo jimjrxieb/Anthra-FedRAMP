@@ -57,12 +57,27 @@ if (array_key_exists ("id", $_GET) && array_key_exists ("security", $_GET)) {
 			$vuln = "Unknown Vulnerability";
 	}
 
+	$id = basename( $id );
+	$security = basename( $security );
+	$allowed_security = array( 'low', 'medium', 'high', 'impossible' );
+	if ( !in_array( $security, $allowed_security, true ) ) {
+		$security = 'low';
+	}
 	$source = @file_get_contents( DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/source/{$security}.php" );
 	$source = str_replace( array( '$html .=' ), array( 'echo' ), $source );
 
 	$js_html = "";
-	if (file_exists (DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/source/{$security}.js")) {
-		$js_source = @file_get_contents( DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/source/{$security}.js" );
+	$allowed_ids = array('brute_force', 'command_injection', 'csrf', 'file_inclusion', 'file_upload', 'insecure_captcha', 'insecure_deserialization', 'os_command_injection', 'sql_injection', 'sql_injection_blind', 'weak_session_ids', 'weak_authentication', 'xss_dom', 'xss_reflected', 'xss_stored');
+	$allowed_security = array('low', 'medium', 'high', 'impossible');
+
+	if (in_array($id, $allowed_ids, true) && in_array($security, $allowed_security, true) && file_exists (DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/source/{$security}.js")) {
+		$id = basename( $id );
+		$security = basename( $security );
+		if ( preg_match( '/^[a-z0-9_-]+$/i', $id ) && preg_match( '/^[a-z0-9_-]+$/i', $security ) ) {
+			$js_source = @file_get_contents( DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/source/{$security}.js" );
+		} else {
+			$js_source = false;
+		}
 		$js_html = "
 		<h2>vulnerabilities/{$id}/source/{$security}.js</h2>
 		<div id=\"code\">

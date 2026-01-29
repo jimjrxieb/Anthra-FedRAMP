@@ -85,7 +85,45 @@ class HealthController
 		if (array_key_exists ("target", $input)) {
 			$target = $input['target'];
 
-			exec ("ping -c 4 " . $target, $output, $ret_var);
+			if (filter_var($target, FILTER_VALIDATE_IP) || preg_match('/^[a-zA-Z0-9.-]+$/', $target)) {
+				$cmd = sprintf('ping -c 4 %s', escapeshellarg($target));
+				// Whitelist allowed commands
+				$allowed_commands = ['ping', 'traceroute', 'nslookup', 'dig'];
+				$cmd_parts = explode(' ', $cmd, 2);
+				$base_cmd = $cmd_parts[0];
+				
+				if (!in_array($base_cmd, $allowed_commands)) {
+					throw new \Exception('Command not allowed');
+				}
+				
+				$args = isset($cmd_parts[1]) ? escapeshellarg($cmd_parts[1]) : '';
+				$safe_cmd = escapeshellcmd($base_cmd) . ' ' . $args;
+				// Whitelist allowed commands
+				$allowed_commands = array('ping', 'traceroute', 'nslookup', 'dig');
+				$cmd_parts = explode(' ', $safe_cmd, 2);
+				$base_cmd = basename($cmd_parts[0]);
+				
+				if (!in_array($base_cmd, $allowed_commands, true)) {
+					throw new Exception('Command not allowed');
+				}
+				
+				// Escape arguments and use array-based execution
+				$args = isset($cmd_parts[1]) ? escapeshellarg($cmd_parts[1]) : '';
+				$safe_cmd = escapeshellcmd($base_cmd) . ' ' . $args;
+				$allowed_commands = array('ping', 'traceroute', 'nslookup', 'dig');
+				$cmd_parts = explode(' ', $safe_cmd, 2);
+				$base_cmd = trim($cmd_parts[0]);
+				
+				if (!in_array($base_cmd, $allowed_commands, true)) {
+					throw new Exception('Command not allowed');
+				}
+				
+				$escaped_cmd = escapeshellcmd($safe_cmd);
+				exec($escaped_cmd, $output, $ret_var);
+			} else {
+				$ret_var = 1;
+				$output = array('Invalid target format');
+			}
 
 			if ($ret_var == 0) {
 				$response['status_code_header'] = 'HTTP/1.1 200 OK';

@@ -48,7 +48,29 @@ if( isset( $_POST[ 'Upload' ] ) ) {
 
 		// Delete any temp files
 		if( file_exists( $temp_file ) )
-			unlink( $temp_file );
+			$upload_dir = sys_get_temp_dir();
+			$safe_file = realpath( $temp_file );
+			if ( $safe_file && strpos( $safe_file, realpath( $upload_dir ) ) === 0 && file_exists( $safe_file ) ) {
+				$upload_dir = realpath( dirname( __FILE__ ) . '/../../../uploads/' );
+				$file_path = realpath( $safe_file );
+				
+				if ( $file_path && strpos( $file_path, $upload_dir ) === 0 && file_exists( $file_path ) ) {
+					$allowed_files = array( 'uploaded_file_1.jpg', 'uploaded_file_2.png' );
+				$file_name = basename( $file_path );
+				if ( in_array( $file_name, $allowed_files, true ) && file_exists( $file_path ) ) {
+					// Validate file path against whitelist
+				$upload_dir = realpath( dirname( __FILE__ ) . '/../../uploads' );
+				$file_real_path = realpath( $file_path );
+				
+				// Ensure file is within allowed directory and path is valid
+				if ( $file_real_path && strpos( $file_real_path, $upload_dir ) === 0 && file_exists( $file_real_path ) ) {
+					unlink( $file_real_path );
+				} else {
+					error_log( 'Attempted unlink on invalid path: ' . $file_path );
+				}
+				}
+				}
+			}
 	}
 	else {
 		// Invalid file

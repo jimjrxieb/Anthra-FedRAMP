@@ -37,6 +37,9 @@ class Token {
 		$iv = $bits[1];
 		$tag = $bits[0];
 		$cleartext = openssl_decrypt($value, self::ENCRYPTION_CIPHER, self::ENCRYPTION_KEY, $options=0, $iv, $tag);
+		if ($cleartext === false) {
+			throw new Exception('Decryption failed: invalid token or corrupted data');
+		}
 		return $cleartext;
 	}
 	public function create_token($secret, $expires) {

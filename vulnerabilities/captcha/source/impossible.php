@@ -43,7 +43,7 @@ if( isset( $_POST[ 'Change' ] ) ) {
 		$data->execute();
 
 		// Do both new password match and was the current password correct?
-		if( ( $pass_new == $pass_conf) && ( $data->rowCount() == 1 ) ) {
+		if( ( $pass_new === $pass_conf) && ( $data->rowCount() === 1 ) ) {
 			// Update the database
 			$data = $db->prepare( 'UPDATE users SET password = (:password) WHERE user = (:user);' );
 			$data->bindParam( ':password', $pass_new, PDO::PARAM_STR );

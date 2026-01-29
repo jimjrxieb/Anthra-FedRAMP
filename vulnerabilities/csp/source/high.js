@@ -6,7 +6,7 @@ function clickButton() {
 
 function solveSum(obj) {
 	if ("answer" in obj) {
-		document.getElementById("answer").innerHTML = obj['answer'];
+		document.getElementById("answer").textContent =  // SECURITY: Use textContent to prevent XSS obj['answer'];
 	}
 }
 

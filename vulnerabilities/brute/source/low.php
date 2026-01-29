@@ -9,10 +9,13 @@ if( isset( $_GET[ 'Login' ] ) ) {
 	$pass = md5( $pass );
 
 	// Check the database
-	$query  = "SELECT * FROM `users` WHERE user = '$user' AND password = '$pass';";
+	$stmt = $mysqli->prepare("SELECT * FROM `users` WHERE user = ? AND password = ?");
+$stmt->bind_param("ss", $user, $pass);
+$stmt->execute();
+$query = $stmt->get_result();
 	$result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ) or die( '<pre>' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '</pre>' );
 
-	if( $result && mysqli_num_rows( $result ) == 1 ) {
+	if( $result && mysqli_num_rows( $result ) === 1 ) {
 		// Get users details
 		$row    = mysqli_fetch_assoc( $result );
 		$avatar = $row["avatar"];
