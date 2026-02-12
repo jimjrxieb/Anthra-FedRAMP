@@ -1,0 +1,165 @@
+{
+  "finding_id": "4629194",
+  "scanner": "trivy",
+  "severity": "MEDIUM",
+  "rank": "D",
+  "title": "Image tag \":latest\" used",
+  "file_path": "infrastructure/api-deployment.yaml",
+  "line": 23,
+  "rule_id": "KSV013",
+  "state": "inbox",
+  "added_at": "2026-02-12T16:35:11.086387+00:00",
+  "updated_at": "2026-02-12T16:35:11.086390+00:00",
+  "cycle_id": 1770914111,
+  "attempts": 0,
+  "last_error": null,
+  "fix_applied_at": null,
+  "resolved_at": null,
+  "escalation_reason": null,
+  "context": {
+    "scanner": "trivy",
+    "severity": "MEDIUM",
+    "title": "Image tag \":latest\" used",
+    "description": "It is best to avoid using the ':latest' image tag when deploying containers in production. Doing so makes it hard to track which version of the image is running, and hard to roll back the version.",
+    "file": "infrastructure/api-deployment.yaml",
+    "line": 23,
+    "rule_id": "KSV013",
+    "resource": "",
+    "remediation": "Use a specific container image tag that is not 'latest'.",
+    "references": [
+      "https://kubernetes.io/docs/concepts/configuration/overview/#container-images",
+      "https://avd.aquasec.com/misconfig/ksv013"
+    ],
+    "raw": {
+      "Type": "Kubernetes Security Check",
+      "ID": "KSV013",
+      "AVDID": "AVD-KSV-0013",
+      "Title": "Image tag \":latest\" used",
+      "Description": "It is best to avoid using the ':latest' image tag when deploying containers in production. Doing so makes it hard to track which version of the image is running, and hard to roll back the version.",
+      "Message": "Container 'api' of Deployment 'anthra-api' should specify an image tag",
+      "Namespace": "builtin.kubernetes.KSV013",
+      "Query": "data.builtin.kubernetes.KSV013.deny",
+      "Resolution": "Use a specific container image tag that is not 'latest'.",
+      "Severity": "MEDIUM",
+      "PrimaryURL": "https://avd.aquasec.com/misconfig/ksv013",
+      "References": [
+        "https://kubernetes.io/docs/concepts/configuration/overview/#container-images",
+        "https://avd.aquasec.com/misconfig/ksv013"
+      ],
+      "Status": "FAIL",
+      "Layer": {},
+      "CauseMetadata": {
+        "Provider": "Kubernetes",
+        "Service": "general",
+        "StartLine": 23,
+        "EndLine": 38,
+        "Code": {
+          "Lines": [
+            {
+              "Number": 23,
+              "Content": "        - name: api",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "        - \u001b[38;5;33mname\u001b[0m: api",
+              "FirstCause": true,
+              "LastCause": false
+            },
+            {
+              "Number": 24,
+              "Content": "          image: anthra/api:latest  # TODO: Pin to specific version tag",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "          \u001b[38;5;33mimage: anthra/api:latest  # TODO\u001b[0m: Pin to specific version tag",
+              "FirstCause": false,
+              "LastCause": false
+            },
+            {
+              "Number": 25,
+              "Content": "          ports:",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "          \u001b[38;5;33mports\u001b[0m:",
+              "FirstCause": false,
+              "LastCause": false
+            },
+            {
+              "Number": 26,
+              "Content": "            - containerPort: 8080",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "            - \u001b[38;5;33mcontainerPort\u001b[0m: \u001b[38;5;37m8080",
+              "FirstCause": false,
+              "LastCause": false
+            },
+            {
+              "Number": 27,
+              "Content": "              name: http",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "\u001b[0m              \u001b[38;5;33mname\u001b[0m: http",
+              "FirstCause": false,
+              "LastCause": false
+            },
+            {
+              "Number": 28,
+              "Content": "          env:",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "          \u001b[38;5;33menv\u001b[0m:",
+              "FirstCause": false,
+              "LastCause": false
+            },
+            {
+              "Number": 29,
+              "Content": "            - name: DB_HOST",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "            - \u001b[38;5;33mname\u001b[0m: DB_HOST",
+              "FirstCause": false,
+              "LastCause": false
+            },
+            {
+              "Number": 30,
+              "Content": "              value: anthra-db",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "              \u001b[38;5;33mvalue\u001b[0m: anthra-db",
+              "FirstCause": false,
+              "LastCause": false
+            },
+            {
+              "Number": 31,
+              "Content": "            - name: DB_PORT",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "            - \u001b[38;5;33mname\u001b[0m: DB_PORT",
+              "FirstCause": false,
+              "LastCause": true
+            },
+            {
+              "Number": 32,
+              "Content": "",
+              "IsCause": false,
+              "Annotation": "",
+              "Truncated": true,
+              "FirstCause": false,
+              "LastCause": false
+            }
+          ]
+        }
+      }
+    },
+    "source_category": "kubernetes",
+    "affected_files": 3,
+    "rank": "D"
+  }
+}

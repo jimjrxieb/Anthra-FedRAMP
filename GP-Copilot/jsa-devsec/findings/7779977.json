@@ -1,0 +1,57 @@
+{
+  "finding_id": "7779977",
+  "scanner": "bandit",
+  "severity": "HIGH",
+  "rank": "D",
+  "title": "Use of weak MD5 hash for security. Consider usedforsecurity=False",
+  "file_path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+  "line": 106,
+  "rule_id": "B324",
+  "state": "inbox",
+  "added_at": "2026-02-12T16:35:11.078191+00:00",
+  "updated_at": "2026-02-12T16:35:11.078193+00:00",
+  "cycle_id": 1770914111,
+  "attempts": 0,
+  "last_error": null,
+  "fix_applied_at": null,
+  "resolved_at": null,
+  "escalation_reason": null,
+  "context": {
+    "scanner": "bandit",
+    "severity": "HIGH",
+    "title": "Use of weak MD5 hash for security. Consider usedforsecurity=False",
+    "description": "Use of weak MD5 hash for security. Consider usedforsecurity=False\n\nTest: hashlib (B324)\nConfidence: HIGH\n\nCode:\n105             \"INSERT INTO users (username, password_hash, email, role, tenant_id) VALUES (?, ?, ?, ?, ?)\",\n106             (\"admin\", hashlib.md5(b\"admin123\").hexdigest(), \"admin@anthra.io\", \"admin\", \"tenant-1\"),\n107         )\n",
+    "file": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+    "line": 106,
+    "column": 22,
+    "rule_id": "B324",
+    "confidence": "HIGH",
+    "cwe": "CWE-327",
+    "remediation": "Review code and follow security best practices.",
+    "references": [
+      "https://bandit.readthedocs.io/en/1.8.6/plugins/b324_hashlib.html",
+      "https://cwe.mitre.org/data/definitions/327.html"
+    ],
+    "raw": {
+      "code": "105             \"INSERT INTO users (username, password_hash, email, role, tenant_id) VALUES (?, ?, ?, ?, ?)\",\n106             (\"admin\", hashlib.md5(b\"admin123\").hexdigest(), \"admin@anthra.io\", \"admin\", \"tenant-1\"),\n107         )\n",
+      "col_offset": 22,
+      "end_col_offset": 46,
+      "filename": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 327,
+        "link": "https://cwe.mitre.org/data/definitions/327.html"
+      },
+      "issue_severity": "HIGH",
+      "issue_text": "Use of weak MD5 hash for security. Consider usedforsecurity=False",
+      "line_number": 106,
+      "line_range": [
+        106
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b324_hashlib.html",
+      "test_id": "B324",
+      "test_name": "hashlib"
+    },
+    "rank": "D"
+  }
+}

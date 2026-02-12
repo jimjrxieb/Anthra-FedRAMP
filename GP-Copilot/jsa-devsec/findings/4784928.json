@@ -1,0 +1,57 @@
+{
+  "finding_id": "4784928",
+  "scanner": "bandit",
+  "severity": "HIGH",
+  "rank": "D",
+  "title": "Use of weak MD5 hash for security. Consider usedforsecurity=False",
+  "file_path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+  "line": 173,
+  "rule_id": "B324",
+  "state": "inbox",
+  "added_at": "2026-02-12T16:35:11.078440+00:00",
+  "updated_at": "2026-02-12T16:35:11.078442+00:00",
+  "cycle_id": 1770914111,
+  "attempts": 0,
+  "last_error": null,
+  "fix_applied_at": null,
+  "resolved_at": null,
+  "escalation_reason": null,
+  "context": {
+    "scanner": "bandit",
+    "severity": "HIGH",
+    "title": "Use of weak MD5 hash for security. Consider usedforsecurity=False",
+    "description": "Use of weak MD5 hash for security. Consider usedforsecurity=False\n\nTest: hashlib (B324)\nConfidence: HIGH\n\nCode:\n172     # CWE-916: MD5 is cryptographically broken\n173     password_hash = hashlib.md5(request.password.encode()).hexdigest()\n174 \n",
+    "file": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+    "line": 173,
+    "column": 20,
+    "rule_id": "B324",
+    "confidence": "HIGH",
+    "cwe": "CWE-327",
+    "remediation": "Review code and follow security best practices.",
+    "references": [
+      "https://bandit.readthedocs.io/en/1.8.6/plugins/b324_hashlib.html",
+      "https://cwe.mitre.org/data/definitions/327.html"
+    ],
+    "raw": {
+      "code": "172     # CWE-916: MD5 is cryptographically broken\n173     password_hash = hashlib.md5(request.password.encode()).hexdigest()\n174 \n",
+      "col_offset": 20,
+      "end_col_offset": 58,
+      "filename": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 327,
+        "link": "https://cwe.mitre.org/data/definitions/327.html"
+      },
+      "issue_severity": "HIGH",
+      "issue_text": "Use of weak MD5 hash for security. Consider usedforsecurity=False",
+      "line_number": 173,
+      "line_range": [
+        173
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b324_hashlib.html",
+      "test_id": "B324",
+      "test_name": "hashlib"
+    },
+    "rank": "D"
+  }
+}

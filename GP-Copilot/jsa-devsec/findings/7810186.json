@@ -1,0 +1,62 @@
+{
+  "finding_id": "7810186",
+  "scanner": "trivy",
+  "severity": "HIGH",
+  "rank": "D",
+  "title": "Image user should not be 'root'",
+  "file_path": "api/Dockerfile",
+  "line": null,
+  "rule_id": "DS002",
+  "state": "inbox",
+  "added_at": "2026-02-12T16:35:11.083787+00:00",
+  "updated_at": "2026-02-12T16:35:11.083790+00:00",
+  "cycle_id": 1770914111,
+  "attempts": 0,
+  "last_error": null,
+  "fix_applied_at": null,
+  "resolved_at": null,
+  "escalation_reason": null,
+  "context": {
+    "scanner": "trivy",
+    "severity": "HIGH",
+    "title": "Image user should not be 'root'",
+    "description": "Running containers with 'root' user can lead to a container escape situation. It is a best practice to run containers as non-root users, which can be done by adding a 'USER' statement to the Dockerfile.",
+    "file": "api/Dockerfile",
+    "line": null,
+    "rule_id": "DS002",
+    "resource": "",
+    "remediation": "Add 'USER <non root user name>' line to the Dockerfile",
+    "references": [
+      "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/",
+      "https://avd.aquasec.com/misconfig/ds002"
+    ],
+    "raw": {
+      "Type": "Dockerfile Security Check",
+      "ID": "DS002",
+      "AVDID": "AVD-DS-0002",
+      "Title": "Image user should not be 'root'",
+      "Description": "Running containers with 'root' user can lead to a container escape situation. It is a best practice to run containers as non-root users, which can be done by adding a 'USER' statement to the Dockerfile.",
+      "Message": "Specify at least 1 USER command in Dockerfile with non-root user as argument",
+      "Namespace": "builtin.dockerfile.DS002",
+      "Query": "data.builtin.dockerfile.DS002.deny",
+      "Resolution": "Add 'USER <non root user name>' line to the Dockerfile",
+      "Severity": "HIGH",
+      "PrimaryURL": "https://avd.aquasec.com/misconfig/ds002",
+      "References": [
+        "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/",
+        "https://avd.aquasec.com/misconfig/ds002"
+      ],
+      "Status": "FAIL",
+      "Layer": {},
+      "CauseMetadata": {
+        "Provider": "Dockerfile",
+        "Service": "general",
+        "Code": {
+          "Lines": null
+        }
+      }
+    },
+    "affected_files": 3,
+    "rank": "D"
+  }
+}

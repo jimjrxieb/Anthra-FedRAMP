@@ -1,0 +1,165 @@
+{
+  "finding_id": "5522460",
+  "scanner": "trivy",
+  "severity": "LOW",
+  "rank": "D",
+  "title": "Runtime/Default Seccomp profile not set",
+  "file_path": "infrastructure/api-deployment.yaml",
+  "line": 23,
+  "rule_id": "KSV030",
+  "state": "inbox",
+  "added_at": "2026-02-12T16:35:11.089016+00:00",
+  "updated_at": "2026-02-12T16:35:11.089018+00:00",
+  "cycle_id": 1770914111,
+  "attempts": 0,
+  "last_error": null,
+  "fix_applied_at": null,
+  "resolved_at": null,
+  "escalation_reason": null,
+  "context": {
+    "scanner": "trivy",
+    "severity": "LOW",
+    "title": "Runtime/Default Seccomp profile not set",
+    "description": "According to pod security standard 'Seccomp', the RuntimeDefault seccomp profile must be required, or allow specific additional profiles.",
+    "file": "infrastructure/api-deployment.yaml",
+    "line": 23,
+    "rule_id": "KSV030",
+    "resource": "",
+    "remediation": "Set 'spec.securityContext.seccompProfile.type', 'spec.containers[*].securityContext.seccompProfile' and 'spec.initContainers[*].securityContext.seccompProfile' to 'RuntimeDefault' or undefined.",
+    "references": [
+      "https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted",
+      "https://avd.aquasec.com/misconfig/ksv030"
+    ],
+    "raw": {
+      "Type": "Kubernetes Security Check",
+      "ID": "KSV030",
+      "AVDID": "AVD-KSV-0030",
+      "Title": "Runtime/Default Seccomp profile not set",
+      "Description": "According to pod security standard 'Seccomp', the RuntimeDefault seccomp profile must be required, or allow specific additional profiles.",
+      "Message": "Either Pod or Container should set 'securityContext.seccompProfile.type' to 'RuntimeDefault'",
+      "Namespace": "builtin.kubernetes.KSV030",
+      "Query": "data.builtin.kubernetes.KSV030.deny",
+      "Resolution": "Set 'spec.securityContext.seccompProfile.type', 'spec.containers[*].securityContext.seccompProfile' and 'spec.initContainers[*].securityContext.seccompProfile' to 'RuntimeDefault' or undefined.",
+      "Severity": "LOW",
+      "PrimaryURL": "https://avd.aquasec.com/misconfig/ksv030",
+      "References": [
+        "https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted",
+        "https://avd.aquasec.com/misconfig/ksv030"
+      ],
+      "Status": "FAIL",
+      "Layer": {},
+      "CauseMetadata": {
+        "Provider": "Kubernetes",
+        "Service": "general",
+        "StartLine": 23,
+        "EndLine": 38,
+        "Code": {
+          "Lines": [
+            {
+              "Number": 23,
+              "Content": "        - name: api",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "        - \u001b[38;5;33mname\u001b[0m: api",
+              "FirstCause": true,
+              "LastCause": false
+            },
+            {
+              "Number": 24,
+              "Content": "          image: anthra/api:latest  # TODO: Pin to specific version tag",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "          \u001b[38;5;33mimage: anthra/api:latest  # TODO\u001b[0m: Pin to specific version tag",
+              "FirstCause": false,
+              "LastCause": false
+            },
+            {
+              "Number": 25,
+              "Content": "          ports:",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "          \u001b[38;5;33mports\u001b[0m:",
+              "FirstCause": false,
+              "LastCause": false
+            },
+            {
+              "Number": 26,
+              "Content": "            - containerPort: 8080",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "            - \u001b[38;5;33mcontainerPort\u001b[0m: \u001b[38;5;37m8080",
+              "FirstCause": false,
+              "LastCause": false
+            },
+            {
+              "Number": 27,
+              "Content": "              name: http",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "\u001b[0m              \u001b[38;5;33mname\u001b[0m: http",
+              "FirstCause": false,
+              "LastCause": false
+            },
+            {
+              "Number": 28,
+              "Content": "          env:",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "          \u001b[38;5;33menv\u001b[0m:",
+              "FirstCause": false,
+              "LastCause": false
+            },
+            {
+              "Number": 29,
+              "Content": "            - name: DB_HOST",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "            - \u001b[38;5;33mname\u001b[0m: DB_HOST",
+              "FirstCause": false,
+              "LastCause": false
+            },
+            {
+              "Number": 30,
+              "Content": "              value: anthra-db",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "              \u001b[38;5;33mvalue\u001b[0m: anthra-db",
+              "FirstCause": false,
+              "LastCause": false
+            },
+            {
+              "Number": 31,
+              "Content": "            - name: DB_PORT",
+              "IsCause": true,
+              "Annotation": "",
+              "Truncated": false,
+              "Highlighted": "            - \u001b[38;5;33mname\u001b[0m: DB_PORT",
+              "FirstCause": false,
+              "LastCause": true
+            },
+            {
+              "Number": 32,
+              "Content": "",
+              "IsCause": false,
+              "Annotation": "",
+              "Truncated": true,
+              "FirstCause": false,
+              "LastCause": false
+            }
+          ]
+        }
+      }
+    },
+    "source_category": "kubernetes",
+    "affected_files": 4,
+    "rank": "D"
+  }
+}

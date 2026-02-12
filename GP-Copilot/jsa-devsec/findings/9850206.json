@@ -1,0 +1,57 @@
+{
+  "finding_id": "9850206",
+  "scanner": "bandit",
+  "severity": "MEDIUM",
+  "rank": "D",
+  "title": "Probable insecure usage of temp file/directory.",
+  "file_path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+  "line": 63,
+  "rule_id": "B108",
+  "state": "inbox",
+  "added_at": "2026-02-12T16:35:11.077996+00:00",
+  "updated_at": "2026-02-12T16:35:11.077998+00:00",
+  "cycle_id": 1770914111,
+  "attempts": 0,
+  "last_error": null,
+  "fix_applied_at": null,
+  "resolved_at": null,
+  "escalation_reason": null,
+  "context": {
+    "scanner": "bandit",
+    "severity": "MEDIUM",
+    "title": "Probable insecure usage of temp file/directory.",
+    "description": "Probable insecure usage of temp file/directory.\n\nTest: hardcoded_tmp_directory (B108)\nConfidence: MEDIUM\n\nCode:\n62         print(f\"PostgreSQL connection failed: {e}, using SQLite fallback\")\n63         conn = sqlite3.connect(\"/tmp/anthra.db\")\n64         _init_sqlite(conn)\n",
+    "file": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+    "line": 63,
+    "column": 31,
+    "rule_id": "B108",
+    "confidence": "MEDIUM",
+    "cwe": "CWE-377",
+    "remediation": "Review code and follow security best practices.",
+    "references": [
+      "https://bandit.readthedocs.io/en/1.8.6/plugins/b108_hardcoded_tmp_directory.html",
+      "https://cwe.mitre.org/data/definitions/377.html"
+    ],
+    "raw": {
+      "code": "62         print(f\"PostgreSQL connection failed: {e}, using SQLite fallback\")\n63         conn = sqlite3.connect(\"/tmp/anthra.db\")\n64         _init_sqlite(conn)\n",
+      "col_offset": 31,
+      "end_col_offset": 47,
+      "filename": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 377,
+        "link": "https://cwe.mitre.org/data/definitions/377.html"
+      },
+      "issue_severity": "MEDIUM",
+      "issue_text": "Probable insecure usage of temp file/directory.",
+      "line_number": 63,
+      "line_range": [
+        63
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b108_hardcoded_tmp_directory.html",
+      "test_id": "B108",
+      "test_name": "hardcoded_tmp_directory"
+    },
+    "rank": "D"
+  }
+}

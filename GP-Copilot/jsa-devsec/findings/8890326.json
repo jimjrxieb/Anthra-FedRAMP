@@ -1,0 +1,180 @@
+{
+  "finding_id": "8890326",
+  "scanner": "semgrep",
+  "severity": "MEDIUM",
+  "rank": "D",
+  "title": "It looks like MD5 is used as a password hash. MD5 is not considered a secure password hash because it can be cracked by an attacker in a short amount of time. Use a suitable password hashing function such as scrypt. You can use `hashlib.scrypt`.",
+  "file_path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+  "line": 225,
+  "rule_id": "python.lang.security.audit.md5-used-as-password.md5-used-as-password",
+  "state": "inbox",
+  "added_at": "2026-02-12T16:35:11.079623+00:00",
+  "updated_at": "2026-02-12T16:35:11.079625+00:00",
+  "cycle_id": 1770914111,
+  "attempts": 0,
+  "last_error": null,
+  "fix_applied_at": null,
+  "resolved_at": null,
+  "escalation_reason": null,
+  "context": {
+    "scanner": "semgrep",
+    "severity": "MEDIUM",
+    "title": "It looks like MD5 is used as a password hash. MD5 is not considered a secure password hash because it can be cracked by an attacker in a short amount of time. Use a suitable password hashing function such as scrypt. You can use `hashlib.scrypt`.",
+    "description": "It looks like MD5 is used as a password hash. MD5 is not considered a secure password hash because it can be cracked by an attacker in a short amount of time. Use a suitable password hashing function such as scrypt. You can use `hashlib.scrypt`.",
+    "file": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+    "line": 225,
+    "column": 21,
+    "rule_id": "python.lang.security.audit.md5-used-as-password.md5-used-as-password",
+    "cwe": "CWE-327: Use of a Broken or Risky Cryptographic Algorithm",
+    "owasp": "A03:2017 - Sensitive Data Exposure",
+    "code_snippet": "    password_hash = hashlib.md5(password.encode()).hexdigest()",
+    "remediation": "Review code and follow security best practices.",
+    "references": [
+      "https://tools.ietf.org/html/rfc6151",
+      "https://crypto.stackexchange.com/questions/44151/how-does-the-flame-malware-take-advantage-of-md5-collision",
+      "https://pycryptodome.readthedocs.io/en/latest/src/hash/sha3_256.html",
+      "https://security.stackexchange.com/questions/211/how-to-securely-hash-passwords",
+      "https://github.com/returntocorp/semgrep-rules/issues/1609",
+      "https://docs.python.org/3/library/hashlib.html#hashlib.scrypt"
+    ],
+    "raw": {
+      "check_id": "python.lang.security.audit.md5-used-as-password.md5-used-as-password",
+      "end": {
+        "col": 63,
+        "line": 225,
+        "offset": 7202
+      },
+      "extra": {
+        "dataflow_trace": {
+          "intermediate_vars": [],
+          "taint_sink": [
+            "CliLoc",
+            [
+              {
+                "end": {
+                  "col": 63,
+                  "line": 225,
+                  "offset": 7202
+                },
+                "path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+                "start": {
+                  "col": 21,
+                  "line": 225,
+                  "offset": 7160
+                }
+              },
+              "hashlib.md5(password.encode()).hexdigest()"
+            ]
+          ],
+          "taint_source": [
+            "CliLoc",
+            [
+              {
+                "end": {
+                  "col": 32,
+                  "line": 225,
+                  "offset": 7171
+                },
+                "path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+                "start": {
+                  "col": 21,
+                  "line": 225,
+                  "offset": 7160
+                }
+              },
+              "hashlib.md5"
+            ]
+          ]
+        },
+        "engine_kind": "OSS",
+        "fingerprint": "2d3ad398f16296aa875f634bf303a380efb9586dec308eee07438703df79776271d0804112da06e161cc7748c2c6362369da525206562cab8dcdc2078a76eef9_0",
+        "is_ignored": false,
+        "lines": "    password_hash = hashlib.md5(password.encode()).hexdigest()",
+        "message": "It looks like MD5 is used as a password hash. MD5 is not considered a secure password hash because it can be cracked by an attacker in a short amount of time. Use a suitable password hashing function such as scrypt. You can use `hashlib.scrypt`.",
+        "metadata": {
+          "category": "security",
+          "confidence": "MEDIUM",
+          "cwe": [
+            "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+          ],
+          "impact": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "likelihood": "HIGH",
+          "owasp": [
+            "A03:2017 - Sensitive Data Exposure",
+            "A02:2021 - Cryptographic Failures",
+            "A04:2025 - Cryptographic Failures"
+          ],
+          "references": [
+            "https://tools.ietf.org/html/rfc6151",
+            "https://crypto.stackexchange.com/questions/44151/how-does-the-flame-malware-take-advantage-of-md5-collision",
+            "https://pycryptodome.readthedocs.io/en/latest/src/hash/sha3_256.html",
+            "https://security.stackexchange.com/questions/211/how-to-securely-hash-passwords",
+            "https://github.com/returntocorp/semgrep-rules/issues/1609",
+            "https://docs.python.org/3/library/hashlib.html#hashlib.scrypt"
+          ],
+          "semgrep.dev": {
+            "rule": {
+              "origin": "community",
+              "r_id": 14703,
+              "rule_id": "6JU1w1",
+              "rv_id": 1263504,
+              "url": "https://semgrep.dev/playground/r/WrTqKDz/python.lang.security.audit.md5-used-as-password.md5-used-as-password",
+              "version_id": "WrTqKDz"
+            }
+          },
+          "shortlink": "https://sg.run/5DwD",
+          "source": "https://semgrep.dev/r/python.lang.security.audit.md5-used-as-password.md5-used-as-password",
+          "subcategory": [
+            "vuln"
+          ],
+          "technology": [
+            "pycryptodome",
+            "hashlib",
+            "md5"
+          ],
+          "vulnerability_class": [
+            "Cryptographic Issues"
+          ]
+        },
+        "metavars": {
+          "$1": {
+            "abstract_content": "hashlib.md5(password.encode()).hexdigest",
+            "end": {
+              "col": 41,
+              "line": 1,
+              "offset": 40
+            },
+            "start": {
+              "col": 1,
+              "line": 1,
+              "offset": 0
+            }
+          },
+          "$FUNCTION": {
+            "abstract_content": "hashlib.md5(password.encode()).hexdigest",
+            "end": {
+              "col": 61,
+              "line": 225,
+              "offset": 7200
+            },
+            "start": {
+              "col": 21,
+              "line": 225,
+              "offset": 7160
+            }
+          }
+        },
+        "severity": "WARNING",
+        "validation_state": "NO_VALIDATOR"
+      },
+      "path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+      "start": {
+        "col": 21,
+        "line": 225,
+        "offset": 7160
+      }
+    },
+    "rank": "D"
+  }
+}

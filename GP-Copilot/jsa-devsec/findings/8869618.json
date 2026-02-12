@@ -1,0 +1,128 @@
+{
+  "finding_id": "8869618",
+  "scanner": "semgrep",
+  "severity": "MEDIUM",
+  "rank": "D",
+  "title": "Found an HTTP server without TLS. Use 'http.ListenAndServeTLS' instead. See https://golang.org/pkg/net/http/#ListenAndServeTLS for more information.",
+  "file_path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/services/main.go",
+  "line": 66,
+  "rule_id": "go.lang.security.audit.net.use-tls.use-tls",
+  "state": "inbox",
+  "added_at": "2026-02-12T16:35:11.082960+00:00",
+  "updated_at": "2026-02-12T16:35:11.082962+00:00",
+  "cycle_id": 1770914111,
+  "attempts": 0,
+  "last_error": null,
+  "fix_applied_at": null,
+  "resolved_at": null,
+  "escalation_reason": null,
+  "context": {
+    "scanner": "semgrep",
+    "severity": "MEDIUM",
+    "title": "Found an HTTP server without TLS. Use 'http.ListenAndServeTLS' instead. See https://golang.org/pkg/net/http/#ListenAndServeTLS for more information.",
+    "description": "Found an HTTP server without TLS. Use 'http.ListenAndServeTLS' instead. See https://golang.org/pkg/net/http/#ListenAndServeTLS for more information.",
+    "file": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/services/main.go",
+    "line": 66,
+    "column": 12,
+    "rule_id": "go.lang.security.audit.net.use-tls.use-tls",
+    "cwe": "CWE-319: Cleartext Transmission of Sensitive Information",
+    "owasp": "A03:2017 - Sensitive Data Exposure",
+    "code_snippet": "\tlog.Fatal(http.ListenAndServe(\":9090\", nil))  // Should use TLS",
+    "remediation": "Review code and follow security best practices.",
+    "references": [
+      "https://golang.org/pkg/net/http/#ListenAndServeTLS"
+    ],
+    "raw": {
+      "check_id": "go.lang.security.audit.net.use-tls.use-tls",
+      "end": {
+        "col": 45,
+        "line": 66,
+        "offset": 1916
+      },
+      "extra": {
+        "engine_kind": "OSS",
+        "fingerprint": "1a8f5286ad541c2e5413af273741d44a229da1690573efdea88a5c37e98d9b1586b16d0e271bd865750724b70289a35fda3216c4086cfc11a17ca08880d92e99_0",
+        "fix": "http.ListenAndServeTLS(\":9090\", certFile, keyFile, nil)",
+        "is_ignored": false,
+        "lines": "\tlog.Fatal(http.ListenAndServe(\":9090\", nil))  // Should use TLS",
+        "message": "Found an HTTP server without TLS. Use 'http.ListenAndServeTLS' instead. See https://golang.org/pkg/net/http/#ListenAndServeTLS for more information.",
+        "metadata": {
+          "category": "security",
+          "confidence": "MEDIUM",
+          "cwe": [
+            "CWE-319: Cleartext Transmission of Sensitive Information"
+          ],
+          "impact": "MEDIUM",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "likelihood": "LOW",
+          "owasp": [
+            "A03:2017 - Sensitive Data Exposure",
+            "A02:2021 - Cryptographic Failures",
+            "A04:2025 - Cryptographic Failures"
+          ],
+          "references": [
+            "https://golang.org/pkg/net/http/#ListenAndServeTLS"
+          ],
+          "semgrep.dev": {
+            "rule": {
+              "origin": "community",
+              "r_id": 9134,
+              "rule_id": "PeUZ8X",
+              "rv_id": 1262948,
+              "url": "https://semgrep.dev/playground/r/JdTzxkn/go.lang.security.audit.net.use-tls.use-tls",
+              "version_id": "JdTzxkn"
+            }
+          },
+          "shortlink": "https://sg.run/dKbY",
+          "source": "https://semgrep.dev/r/go.lang.security.audit.net.use-tls.use-tls",
+          "subcategory": [
+            "audit"
+          ],
+          "technology": [
+            "go"
+          ],
+          "vulnerability_class": [
+            "Mishandled Sensitive Information"
+          ]
+        },
+        "metavars": {
+          "$ADDR": {
+            "abstract_content": "\":9090\"",
+            "end": {
+              "col": 39,
+              "line": 66,
+              "offset": 1910
+            },
+            "start": {
+              "col": 32,
+              "line": 66,
+              "offset": 1903
+            }
+          },
+          "$HANDLER": {
+            "abstract_content": "nil",
+            "end": {
+              "col": 44,
+              "line": 66,
+              "offset": 1915
+            },
+            "start": {
+              "col": 41,
+              "line": 66,
+              "offset": 1912
+            }
+          }
+        },
+        "severity": "WARNING",
+        "validation_state": "NO_VALIDATOR"
+      },
+      "path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/services/main.go",
+      "start": {
+        "col": 12,
+        "line": 66,
+        "offset": 1883
+      }
+    },
+    "rank": "D"
+  }
+}

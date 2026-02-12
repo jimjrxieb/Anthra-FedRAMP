@@ -1,0 +1,135 @@
+{
+  "finding_id": "4347066",
+  "scanner": "semgrep",
+  "severity": "MEDIUM",
+  "rank": "D",
+  "title": "In Kubernetes, each pod runs in its own isolated environment with its own set of security policies. However, certain container images may contain `setuid` or `setgid` binaries that could allow an attacker to perform privilege escalation and gain access to sensitive resources. To mitigate this risk, it's recommended to add a `securityContext` to the container in the pod, with the parameter `allowPrivilegeEscalation` set to `false`. This will prevent the container from running any privileged processes and limit the impact of any potential attacks. By adding a `securityContext` to your Kubernetes pod, you can help to ensure that your containerized applications are more secure and less vulnerable to privilege escalation attacks.",
+  "file_path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/infrastructure/log-ingest-deployment.yaml",
+  "line": 18,
+  "rule_id": "yaml.kubernetes.security.allow-privilege-escalation-no-securitycontext.allow-privilege-escalation-no-securitycontext",
+  "state": "inbox",
+  "added_at": "2026-02-12T16:35:11.082024+00:00",
+  "updated_at": "2026-02-12T16:35:11.082026+00:00",
+  "cycle_id": 1770914111,
+  "attempts": 0,
+  "last_error": null,
+  "fix_applied_at": null,
+  "resolved_at": null,
+  "escalation_reason": null,
+  "context": {
+    "scanner": "semgrep",
+    "severity": "MEDIUM",
+    "title": "In Kubernetes, each pod runs in its own isolated environment with its own set of security policies. However, certain container images may contain `setuid` or `setgid` binaries that could allow an attacker to perform privilege escalation and gain access to sensitive resources. To mitigate this risk, it's recommended to add a `securityContext` to the container in the pod, with the parameter `allowPrivilegeEscalation` set to `false`. This will prevent the container from running any privileged processes and limit the impact of any potential attacks. By adding a `securityContext` to your Kubernetes pod, you can help to ensure that your containerized applications are more secure and less vulnerable to privilege escalation attacks.",
+    "description": "In Kubernetes, each pod runs in its own isolated environment with its own set of security policies. However, certain container images may contain `setuid` or `setgid` binaries that could allow an attacker to perform privilege escalation and gain access to sensitive resources. To mitigate this risk, it's recommended to add a `securityContext` to the container in the pod, with the parameter `allowPrivilegeEscalation` set to `false`. This will prevent the container from running any privileged processes and limit the impact of any potential attacks. By adding a `securityContext` to your Kubernetes pod, you can help to ensure that your containerized applications are more secure and less vulnerable to privilege escalation attacks.",
+    "file": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/infrastructure/log-ingest-deployment.yaml",
+    "line": 18,
+    "column": 11,
+    "rule_id": "yaml.kubernetes.security.allow-privilege-escalation-no-securitycontext.allow-privilege-escalation-no-securitycontext",
+    "cwe": "CWE-732: Incorrect Permission Assignment for Critical Resource",
+    "owasp": "A05:2021 - Security Misconfiguration",
+    "code_snippet": "        - name: log-ingest",
+    "remediation": "Review code and follow security best practices.",
+    "references": [
+      "https://kubernetes.io/docs/concepts/policy/pod-security-policy/#privilege-escalation",
+      "https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
+      "https://www.kernel.org/doc/Documentation/prctl/no_new_privs.txt",
+      "https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html#rule-4-add-no-new-privileges-flag"
+    ],
+    "raw": {
+      "check_id": "yaml.kubernetes.security.allow-privilege-escalation-no-securitycontext.allow-privilege-escalation-no-securitycontext",
+      "end": {
+        "col": 15,
+        "line": 18,
+        "offset": 358
+      },
+      "extra": {
+        "engine_kind": "OSS",
+        "fingerprint": "91da7a755efb9082e0815d93e9bee3c9f0d586b880a9ed44b0a42a6e40a26422ddc2aa1779a31be9b8c44c569f7c6a55e0c7b266ab0c067fc7a0e3c4d0b3cfb7_0",
+        "fix": "securityContext:\n  allowPrivilegeEscalation: false\nname",
+        "is_ignored": false,
+        "lines": "        - name: log-ingest",
+        "message": "In Kubernetes, each pod runs in its own isolated environment with its own set of security policies. However, certain container images may contain `setuid` or `setgid` binaries that could allow an attacker to perform privilege escalation and gain access to sensitive resources. To mitigate this risk, it's recommended to add a `securityContext` to the container in the pod, with the parameter `allowPrivilegeEscalation` set to `false`. This will prevent the container from running any privileged processes and limit the impact of any potential attacks. By adding a `securityContext` to your Kubernetes pod, you can help to ensure that your containerized applications are more secure and less vulnerable to privilege escalation attacks.",
+        "metadata": {
+          "category": "security",
+          "confidence": "MEDIUM",
+          "cwe": [
+            "CWE-732: Incorrect Permission Assignment for Critical Resource"
+          ],
+          "cwe2021-top25": true,
+          "impact": "MEDIUM",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "likelihood": "MEDIUM",
+          "owasp": [
+            "A05:2021 - Security Misconfiguration",
+            "A06:2017 - Security Misconfiguration",
+            "A02:2025 - Security Misconfiguration"
+          ],
+          "references": [
+            "https://kubernetes.io/docs/concepts/policy/pod-security-policy/#privilege-escalation",
+            "https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
+            "https://www.kernel.org/doc/Documentation/prctl/no_new_privs.txt",
+            "https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html#rule-4-add-no-new-privileges-flag"
+          ],
+          "semgrep.dev": {
+            "rule": {
+              "origin": "community",
+              "r_id": 47276,
+              "rule_id": "WAU5J6",
+              "rv_id": 1263931,
+              "url": "https://semgrep.dev/playground/r/2KTv2j8/yaml.kubernetes.security.allow-privilege-escalation-no-securitycontext.allow-privilege-escalation-no-securitycontext",
+              "version_id": "2KTv2j8"
+            }
+          },
+          "shortlink": "https://sg.run/eleR",
+          "source": "https://semgrep.dev/r/yaml.kubernetes.security.allow-privilege-escalation-no-securitycontext.allow-privilege-escalation-no-securitycontext",
+          "subcategory": [
+            "vuln"
+          ],
+          "technology": [
+            "kubernetes"
+          ],
+          "vulnerability_class": [
+            "Improper Authorization"
+          ]
+        },
+        "metavars": {
+          "$CONTAINER": {
+            "abstract_content": "log-ingest",
+            "end": {
+              "col": 27,
+              "line": 18,
+              "offset": 370
+            },
+            "start": {
+              "col": 17,
+              "line": 18,
+              "offset": 360
+            }
+          },
+          "$NAME": {
+            "abstract_content": "name",
+            "end": {
+              "col": 15,
+              "line": 18,
+              "offset": 358
+            },
+            "start": {
+              "col": 11,
+              "line": 18,
+              "offset": 354
+            }
+          }
+        },
+        "severity": "WARNING",
+        "validation_state": "NO_VALIDATOR"
+      },
+      "path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/infrastructure/log-ingest-deployment.yaml",
+      "start": {
+        "col": 11,
+        "line": 18,
+        "offset": 354
+      }
+    },
+    "rank": "D"
+  }
+}

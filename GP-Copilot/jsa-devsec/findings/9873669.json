@@ -1,0 +1,63 @@
+{
+  "finding_id": "9873669",
+  "scanner": "trivy",
+  "severity": "HIGH",
+  "rank": "D",
+  "title": "Prevent binding to privileged ports",
+  "file_path": "infrastructure/ui-deployment.yaml",
+  "line": null,
+  "rule_id": "KSV117",
+  "state": "inbox",
+  "added_at": "2026-02-12T16:35:11.089890+00:00",
+  "updated_at": "2026-02-12T16:35:11.089892+00:00",
+  "cycle_id": 1770914111,
+  "attempts": 0,
+  "last_error": null,
+  "fix_applied_at": null,
+  "resolved_at": null,
+  "escalation_reason": null,
+  "context": {
+    "scanner": "trivy",
+    "severity": "HIGH",
+    "title": "Prevent binding to privileged ports",
+    "description": "The ports which are lower than 1024 receive and transmit various sensitive and privileged data. Allowing containers to use them can bring serious implications.",
+    "file": "infrastructure/ui-deployment.yaml",
+    "line": null,
+    "rule_id": "KSV117",
+    "resource": "",
+    "remediation": "Do not map the container ports to privileged host ports when starting a container.",
+    "references": [
+      "https://kubernetes.io/docs/concepts/security/pod-security-standards/",
+      "https://avd.aquasec.com/misconfig/ksv117"
+    ],
+    "raw": {
+      "Type": "Kubernetes Security Check",
+      "ID": "KSV117",
+      "AVDID": "AVD-KSV-0117",
+      "Title": "Prevent binding to privileged ports",
+      "Description": "The ports which are lower than 1024 receive and transmit various sensitive and privileged data. Allowing containers to use them can bring serious implications.",
+      "Message": "deployment novasec-ui in novasec namespace should not set spec.template.spec.containers.ports.containerPort to less than 1024",
+      "Namespace": "builtin.kubernetes.KSV117",
+      "Query": "data.builtin.kubernetes.KSV117.deny",
+      "Resolution": "Do not map the container ports to privileged host ports when starting a container.",
+      "Severity": "HIGH",
+      "PrimaryURL": "https://avd.aquasec.com/misconfig/ksv117",
+      "References": [
+        "https://kubernetes.io/docs/concepts/security/pod-security-standards/",
+        "https://avd.aquasec.com/misconfig/ksv117"
+      ],
+      "Status": "FAIL",
+      "Layer": {},
+      "CauseMetadata": {
+        "Provider": "Kubernetes",
+        "Service": "general",
+        "Code": {
+          "Lines": null
+        }
+      }
+    },
+    "source_category": "kubernetes",
+    "affected_files": 1,
+    "rank": "D"
+  }
+}

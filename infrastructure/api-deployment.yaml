@@ -21,7 +21,11 @@ spec:
       # TODO: Create custom ServiceAccount with minimal RBAC
       containers:
         - name: api
-          image: anthra/api:latest  # TODO: Pin to specific version tag
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+          image: anthra/api:v1.42.0@sha256:e39edf7b8d492a2c6e33de78a1f7e09e19cc588efdd61007d04a3fc3ba173a95  # TODO: Pin to specific version tag
           ports:
             - containerPort: 8080
               name: http

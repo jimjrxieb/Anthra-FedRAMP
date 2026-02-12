@@ -103,7 +103,7 @@ def _init_sqlite(conn):
         # CWE-916: Use of password hash with insufficient computational effort (MD5)
         conn.execute(
             "INSERT INTO users (username, password_hash, email, role, tenant_id) VALUES (?, ?, ?, ?, ?)",
-            ("admin", hashlib.md5(b"admin123").hexdigest(), "admin@anthra.io", "admin", "tenant-1"),
+            ("admin", hashlib.sha256(b"admin123").hexdigest(), "admin@anthra.io", "admin", "tenant-1"),
         )
         for i in range(1, 4):
             conn.execute(
@@ -170,7 +170,8 @@ async def login(request: LoginRequest):
     cur = conn.cursor()
 
     # CWE-916: MD5 is cryptographically broken
-    password_hash = hashlib.md5(request.password.encode()).hexdigest()
+    import bcrypt
+password_hash = bcrypt.hashpw(request.password.encode(), bcrypt.gensalt())
 
     # Using parameterized queries (good practice maintained)
     cur.execute(
@@ -222,7 +223,7 @@ async def register(request: Request):
     cur = conn.cursor()
 
     # CWE-916: MD5 password hashing
-    password_hash = hashlib.md5(password.encode()).hexdigest()
+    password_hash = hashlib.sha256(password.encode()).hexdigest()
 
     try:
         cur.execute(

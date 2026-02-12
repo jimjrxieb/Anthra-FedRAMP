@@ -1,0 +1,63 @@
+{
+  "finding_id": "7551509",
+  "scanner": "trivy",
+  "severity": "MEDIUM",
+  "rank": "D",
+  "title": "Seccomp policies disabled",
+  "file_path": "infrastructure/api-deployment.yaml",
+  "line": null,
+  "rule_id": "KSV104",
+  "state": "inbox",
+  "added_at": "2026-02-12T16:35:11.089371+00:00",
+  "updated_at": "2026-02-12T16:35:11.089374+00:00",
+  "cycle_id": 1770914111,
+  "attempts": 0,
+  "last_error": null,
+  "fix_applied_at": null,
+  "resolved_at": null,
+  "escalation_reason": null,
+  "context": {
+    "scanner": "trivy",
+    "severity": "MEDIUM",
+    "title": "Seccomp policies disabled",
+    "description": "A program inside the container can bypass Seccomp protection policies.",
+    "file": "infrastructure/api-deployment.yaml",
+    "line": null,
+    "rule_id": "KSV104",
+    "resource": "",
+    "remediation": "Specify seccomp either by annotation or by seccomp profile type having allowed values as per pod security standards",
+    "references": [
+      "https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline",
+      "https://avd.aquasec.com/misconfig/ksv104"
+    ],
+    "raw": {
+      "Type": "Kubernetes Security Check",
+      "ID": "KSV104",
+      "AVDID": "AVD-KSV-0104",
+      "Title": "Seccomp policies disabled",
+      "Description": "A program inside the container can bypass Seccomp protection policies.",
+      "Message": "container \"api\" of deployment \"anthra-api\" in \"anthra\" namespace should specify a seccomp profile",
+      "Namespace": "builtin.kubernetes.KSV104",
+      "Query": "data.builtin.kubernetes.KSV104.deny",
+      "Resolution": "Specify seccomp either by annotation or by seccomp profile type having allowed values as per pod security standards",
+      "Severity": "MEDIUM",
+      "PrimaryURL": "https://avd.aquasec.com/misconfig/ksv104",
+      "References": [
+        "https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline",
+        "https://avd.aquasec.com/misconfig/ksv104"
+      ],
+      "Status": "FAIL",
+      "Layer": {},
+      "CauseMetadata": {
+        "Provider": "Kubernetes",
+        "Service": "general",
+        "Code": {
+          "Lines": null
+        }
+      }
+    },
+    "source_category": "kubernetes",
+    "affected_files": 4,
+    "rank": "D"
+  }
+}

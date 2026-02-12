@@ -1,0 +1,183 @@
+{
+  "finding_id": "9708862",
+  "scanner": "semgrep",
+  "severity": "MEDIUM",
+  "rank": "D",
+  "title": "CORS policy allows any origin (using wildcard '*'). This is insecure and should be avoided.",
+  "file_path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+  "line": 40,
+  "rule_id": "python.fastapi.security.wildcard-cors.wildcard-cors",
+  "state": "inbox",
+  "added_at": "2026-02-12T16:35:11.078857+00:00",
+  "updated_at": "2026-02-12T16:35:11.078859+00:00",
+  "cycle_id": 1770914111,
+  "attempts": 0,
+  "last_error": null,
+  "fix_applied_at": null,
+  "resolved_at": null,
+  "escalation_reason": null,
+  "context": {
+    "scanner": "semgrep",
+    "severity": "MEDIUM",
+    "title": "CORS policy allows any origin (using wildcard '*'). This is insecure and should be avoided.",
+    "description": "CORS policy allows any origin (using wildcard '*'). This is insecure and should be avoided.",
+    "file": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+    "line": 40,
+    "column": 19,
+    "rule_id": "python.fastapi.security.wildcard-cors.wildcard-cors",
+    "cwe": "CWE-942: Permissive Cross-domain Policy with Untrusted Domains",
+    "owasp": "A05:2021 - Security Misconfiguration",
+    "code_snippet": "    allow_origins=[\"*\"],  # Should be restricted to known origins",
+    "remediation": "Review code and follow security best practices.",
+    "references": [
+      "https://owasp.org/Top10/A05_2021-Security_Misconfiguration",
+      "https://cwe.mitre.org/data/definitions/942.html"
+    ],
+    "raw": {
+      "check_id": "python.fastapi.security.wildcard-cors.wildcard-cors",
+      "end": {
+        "col": 24,
+        "line": 40,
+        "offset": 1318
+      },
+      "extra": {
+        "dataflow_trace": {
+          "intermediate_vars": [],
+          "taint_sink": [
+            "CliLoc",
+            [
+              {
+                "end": {
+                  "col": 24,
+                  "line": 40,
+                  "offset": 1318
+                },
+                "path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+                "start": {
+                  "col": 19,
+                  "line": 40,
+                  "offset": 1313
+                }
+              },
+              "[\"*\"]"
+            ]
+          ],
+          "taint_source": [
+            "CliLoc",
+            [
+              {
+                "end": {
+                  "col": 24,
+                  "line": 40,
+                  "offset": 1318
+                },
+                "path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+                "start": {
+                  "col": 19,
+                  "line": 40,
+                  "offset": 1313
+                }
+              },
+              "[\"*\"]"
+            ]
+          ]
+        },
+        "engine_kind": "OSS",
+        "fingerprint": "7c4191442e29b151ce30afdbfdcd906f3850e59d83c874b5f0cfd36aaf7871e32dd106b18ceae7525cc447f815fbccf879819ffef22e53c784bd90639c21f6e3_0",
+        "is_ignored": false,
+        "lines": "    allow_origins=[\"*\"],  # Should be restricted to known origins",
+        "message": "CORS policy allows any origin (using wildcard '*'). This is insecure and should be avoided.",
+        "metadata": {
+          "category": "security",
+          "confidence": "MEDIUM",
+          "cwe": [
+            "CWE-942: Permissive Cross-domain Policy with Untrusted Domains"
+          ],
+          "impact": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "likelihood": "HIGH",
+          "owasp": [
+            "A05:2021 - Security Misconfiguration",
+            "A02:2025 - Security Misconfiguration"
+          ],
+          "references": [
+            "https://owasp.org/Top10/A05_2021-Security_Misconfiguration",
+            "https://cwe.mitre.org/data/definitions/942.html"
+          ],
+          "semgrep.dev": {
+            "rule": {
+              "origin": "community",
+              "r_id": 112311,
+              "rule_id": "lBU4JQ3",
+              "rv_id": 1263413,
+              "url": "https://semgrep.dev/playground/r/A8Tgd1R/python.fastapi.security.wildcard-cors.wildcard-cors",
+              "version_id": "A8Tgd1R"
+            }
+          },
+          "shortlink": "https://sg.run/KxApY",
+          "source": "https://semgrep.dev/r/python.fastapi.security.wildcard-cors.wildcard-cors",
+          "subcategory": [
+            "vuln"
+          ],
+          "technology": [
+            "python",
+            "fastapi"
+          ],
+          "vulnerability_class": [
+            "Configuration"
+          ]
+        },
+        "metavars": {
+          "$APP": {
+            "abstract_content": "app",
+            "end": {
+              "col": 4,
+              "line": 38,
+              "offset": 1256
+            },
+            "propagated_value": {
+              "svalue_abstract_content": "FastAPI(title\"Anthra Security Platform\"version\"1.0.0\"description\"Cloud-native security monitoring and threat detection\")",
+              "svalue_end": {
+                "col": 2,
+                "line": 35,
+                "offset": 1214
+              },
+              "svalue_start": {
+                "col": 7,
+                "line": 31,
+                "offset": 1068
+              }
+            },
+            "start": {
+              "col": 1,
+              "line": 38,
+              "offset": 1253
+            }
+          },
+          "$ORIGIN": {
+            "abstract_content": "[\"*\"]",
+            "end": {
+              "col": 24,
+              "line": 40,
+              "offset": 1318
+            },
+            "start": {
+              "col": 19,
+              "line": 40,
+              "offset": 1313
+            }
+          }
+        },
+        "severity": "WARNING",
+        "validation_state": "NO_VALIDATOR"
+      },
+      "path": "/home/jimmie/linkops-industries/GP-copilot/GP-PROJECTS/01-instance/slot-3/Anthra-FedRAMP/api/main.py",
+      "start": {
+        "col": 19,
+        "line": 40,
+        "offset": 1313
+      }
+    },
+    "rank": "D"
+  }
+}

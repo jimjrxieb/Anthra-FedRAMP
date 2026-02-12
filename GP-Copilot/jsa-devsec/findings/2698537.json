@@ -1,0 +1,97 @@
+{
+  "finding_id": "2698537",
+  "scanner": "trivy",
+  "severity": "HIGH",
+  "rank": "D",
+  "title": "CVE-2024-24762: `python-multipart` is a streaming multipart parser for Python. When us ...",
+  "file_path": "api/requirements.txt",
+  "line": 0,
+  "rule_id": "CVE-2024-24762",
+  "state": "inbox",
+  "added_at": "2026-02-12T16:35:11.083245+00:00",
+  "updated_at": "2026-02-12T16:35:11.083248+00:00",
+  "cycle_id": 1770914111,
+  "attempts": 0,
+  "last_error": null,
+  "fix_applied_at": null,
+  "resolved_at": null,
+  "escalation_reason": null,
+  "context": {
+    "scanner": "trivy",
+    "severity": "HIGH",
+    "title": "CVE-2024-24762: `python-multipart` is a streaming multipart parser for Python. When us ...",
+    "description": "`python-multipart` is a streaming multipart parser for Python. When using form data, `python-multipart` uses a Regular Expression to parse the HTTP `Content-Type` header, including options. An attacker could send a custom-made `Content-Type` option that is very difficult for the RegEx to process, consuming CPU resources and stalling indefinitely (minutes or more) while holding the main event loop. This means that process can't handle any more requests, leading to regular expression denial of service. This vulnerability has been patched in version 0.0.7.",
+    "file": "api/requirements.txt",
+    "package": "python-multipart",
+    "installed_version": "0.0.6",
+    "fixed_version": "0.0.7",
+    "rule_id": "CVE-2024-24762",
+    "cwe": "CWE-400, CWE-1333",
+    "cvss_score": 7.5,
+    "remediation": "Upgrade python-multipart to 0.0.7",
+    "references": [
+      "https://github.com/Kludex/python-multipart",
+      "https://github.com/Kludex/python-multipart/commit/20f0ef6b4e4caf7d69a667c54dff57fe467109a4",
+      "https://github.com/Kludex/python-multipart/security/advisories/GHSA-2jv5-9r88-3w3p",
+      "https://github.com/andrew-d/python-multipart/blob/d3d16dae4b061c34fe9d3c9081d9800c49fc1f7a/multipart/multipart.py#L72-L74",
+      "https://github.com/encode/starlette/commit/13e5c26a27f4903924624736abd6131b2da80cc5",
+      "https://github.com/encode/starlette/security/advisories/GHSA-93gm-qmq6-w238",
+      "https://github.com/github/advisory-database/pull/4829",
+      "https://github.com/pypa/advisory-database/tree/main/vulns/fastapi/PYSEC-2024-38.yaml",
+      "https://github.com/tiangolo/fastapi/commit/9d34ad0ee8a0dfbbcce06f76c2d5d851085024fc",
+      "https://github.com/tiangolo/fastapi/releases/tag/0.109.1",
+      "https://github.com/tiangolo/fastapi/security/advisories/GHSA-qf9m-vfgh-m389",
+      "https://nvd.nist.gov/vuln/detail/CVE-2024-24762"
+    ],
+    "raw": {
+      "VulnerabilityID": "CVE-2024-24762",
+      "PkgName": "python-multipart",
+      "InstalledVersion": "0.0.6",
+      "FixedVersion": "0.0.7",
+      "Status": "fixed",
+      "Layer": {},
+      "SeveritySource": "ghsa",
+      "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2024-24762",
+      "DataSource": {
+        "ID": "ghsa",
+        "Name": "GitHub Security Advisory pip",
+        "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Apip"
+      },
+      "Title": "`python-multipart` is a streaming multipart parser for Python. When us ...",
+      "Description": "`python-multipart` is a streaming multipart parser for Python. When using form data, `python-multipart` uses a Regular Expression to parse the HTTP `Content-Type` header, including options. An attacker could send a custom-made `Content-Type` option that is very difficult for the RegEx to process, consuming CPU resources and stalling indefinitely (minutes or more) while holding the main event loop. This means that process can't handle any more requests, leading to regular expression denial of service. This vulnerability has been patched in version 0.0.7.",
+      "Severity": "HIGH",
+      "CweIDs": [
+        "CWE-400",
+        "CWE-1333"
+      ],
+      "CVSS": {
+        "ghsa": {
+          "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "V3Score": 7.5
+        },
+        "nvd": {
+          "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "V3Score": 7.5
+        }
+      },
+      "References": [
+        "https://github.com/Kludex/python-multipart",
+        "https://github.com/Kludex/python-multipart/commit/20f0ef6b4e4caf7d69a667c54dff57fe467109a4",
+        "https://github.com/Kludex/python-multipart/security/advisories/GHSA-2jv5-9r88-3w3p",
+        "https://github.com/andrew-d/python-multipart/blob/d3d16dae4b061c34fe9d3c9081d9800c49fc1f7a/multipart/multipart.py#L72-L74",
+        "https://github.com/encode/starlette/commit/13e5c26a27f4903924624736abd6131b2da80cc5",
+        "https://github.com/encode/starlette/security/advisories/GHSA-93gm-qmq6-w238",
+        "https://github.com/github/advisory-database/pull/4829",
+        "https://github.com/pypa/advisory-database/tree/main/vulns/fastapi/PYSEC-2024-38.yaml",
+        "https://github.com/tiangolo/fastapi/commit/9d34ad0ee8a0dfbbcce06f76c2d5d851085024fc",
+        "https://github.com/tiangolo/fastapi/releases/tag/0.109.1",
+        "https://github.com/tiangolo/fastapi/security/advisories/GHSA-qf9m-vfgh-m389",
+        "https://nvd.nist.gov/vuln/detail/CVE-2024-24762"
+      ],
+      "PublishedDate": "2024-02-05T15:15:09.26Z",
+      "LastModifiedDate": "2025-05-05T14:14:26.363Z"
+    },
+    "affected_files": 1,
+    "rank": "D"
+  }
+}

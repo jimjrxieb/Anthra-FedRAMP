@@ -15,7 +15,7 @@ services:
     environment:
       POSTGRES_DB: anthra
       POSTGRES_USER: anthra
-      POSTGRES_PASSWORD: anthra_default_pass_123  # CWE-798: Credentials in env vars
+      # SECURITY: Secret removed - set POSTGRES_PASSWORD via environment variable or secrets manager
     ports:
       - "5432:5432"
     volumes:
@@ -33,7 +33,7 @@ services:
       DB_PORT: "5432"
       DB_NAME: anthra
       DB_USER: anthra
-      DB_PASSWORD: anthra_default_pass_123  # CWE-522: Plaintext credentials
+      # SECURITY: Secret removed - set DB_PASSWORD via environment variable or secrets manager
     depends_on:
       - db
     # Missing: resource limits, healthchecks, security options, TLS
@@ -57,7 +57,7 @@ services:
       DB_PORT: "5432"
       DB_NAME: anthra
       DB_USER: anthra
-      DB_PASSWORD: anthra_default_pass_123  # CWE-522: Plaintext credentials
+      # SECURITY: Secret removed - set DB_PASSWORD via environment variable or secrets manager
     depends_on:
       - db
     # Missing: resource limits, healthchecks, TLS, rate limiting
