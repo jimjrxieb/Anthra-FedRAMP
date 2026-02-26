@@ -1,0 +1,46 @@
+# pdb.yaml
+# PodDisruptionBudget — availability during node drain / cluster upgrades
+# Ensures at least 1 API and 1 UI pod stays running during voluntary disruptions.
+#
+# Not a direct FedRAMP control, but required for CP-7 (Alternate Processing Site)
+# and general availability SLO maintenance.
+#
+# Apply: kubectl apply -f infrastructure/pdb.yaml
+
+# ── API: keep at least 1 pod up during drain ──────────────────────────────
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: anthra-api-pdb
+  namespace: anthra
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: anthra-api
+
+---
+# ── UI: keep at least 1 pod up during drain ───────────────────────────────
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: anthra-ui-pdb
+  namespace: anthra
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: anthra-ui
+
+---
+# ── Log-ingest: keep at least 1 pod up ────────────────────────────────────
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: anthra-log-ingest-pdb
+  namespace: anthra
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: anthra-log-ingest

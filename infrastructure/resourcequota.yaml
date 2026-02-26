@@ -1,0 +1,40 @@
+# resourcequota.yaml
+# NIST 800-53 SC-5: Denial-of-Service Protection
+# NIST 800-53 CM-6: Configuration Settings (enforce known-good resource envelope)
+#
+# Namespace-level caps prevent runaway consumption during an attack or bug.
+# Adjust limits to match actual workload headroom + 20% buffer.
+#
+# Apply: kubectl apply -f infrastructure/resourcequota.yaml
+
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: anthra-quota
+  namespace: anthra
+  labels:
+    control: SC-5
+spec:
+  hard:
+    # Compute
+    requests.cpu: "2"
+    limits.cpu: "8"
+    requests.memory: "2Gi"
+    limits.memory: "8Gi"
+
+    # Workload objects — prevents runaway pod spawning
+    pods: "20"
+    count/deployments.apps: "10"
+
+    # Storage
+    persistentvolumeclaims: "5"
+    requests.storage: "50Gi"
+
+    # Secrets — keeps the attack surface bounded
+    secrets: "20"
+    configmaps: "20"
+
+    # Services — no accidental NodePort proliferation
+    services: "10"
+    services.nodeports: "0"
+    services.loadbalancers: "2"

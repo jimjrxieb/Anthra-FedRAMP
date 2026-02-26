@@ -1,0 +1,186 @@
+# networkpolicy.yaml
+# NIST 800-53 SC-7: Boundary Protection
+# NIST 800-53 AC-17: Remote Access (restrict ingress paths)
+# NIST 800-53 AC-4: Information Flow Enforcement (default deny, explicit allow)
+#
+# Architecture:
+#   ingress-nginx → anthra-ui (port 80)
+#   ingress-nginx → anthra-api (port 8080)
+#   anthra-api    → anthra-db (port 5432)
+#   anthra-api    → anthra-log-ingest (port 9090)
+#   anthra-log-ingest → anthra-db (port 5432)
+#   All pods      → kube-dns (port 53)
+#   Nothing else  → BLOCKED
+
+# ── Default deny all ingress and egress ───────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: anthra
+  labels:
+    control: SC-7
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+
+---
+# ── Allow DNS egress from all pods (required for service discovery) ───────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+  namespace: anthra
+  labels:
+    control: SC-7
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+
+---
+# ── UI: allow ingress from ingress-nginx only ─────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-ui
+  namespace: anthra
+  labels:
+    control: SC-7
+spec:
+  podSelector:
+    matchLabels:
+      app: anthra-ui
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 80
+
+---
+# ── API: allow ingress from ingress-nginx only ────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-api
+  namespace: anthra
+  labels:
+    control: SC-7
+spec:
+  podSelector:
+    matchLabels:
+      app: anthra-api
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 8080
+
+---
+# ── API: allow egress to DB and log-ingest ───────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-api-egress
+  namespace: anthra
+  labels:
+    control: SC-7
+spec:
+  podSelector:
+    matchLabels:
+      app: anthra-api
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: anthra-db
+      ports:
+        - protocol: TCP
+          port: 5432
+    - to:
+        - podSelector:
+            matchLabels:
+              app: anthra-log-ingest
+      ports:
+        - protocol: TCP
+          port: 9090
+
+---
+# ── DB: allow ingress from API and log-ingest only ───────────────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-db-ingress
+  namespace: anthra
+  labels:
+    control: SC-7
+spec:
+  podSelector:
+    matchLabels:
+      app: anthra-db
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: anthra-api
+        - podSelector:
+            matchLabels:
+              app: anthra-log-ingest
+      ports:
+        - protocol: TCP
+          port: 5432
+
+---
+# ── Log-ingest: allow ingress from API, egress to DB ────────────────────
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-log-ingest-ingress
+  namespace: anthra
+  labels:
+    control: SC-7
+spec:
+  podSelector:
+    matchLabels:
+      app: anthra-log-ingest
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: anthra-api
+      ports:
+        - protocol: TCP
+          port: 9090
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: anthra-db
+      ports:
+        - protocol: TCP
+          port: 5432

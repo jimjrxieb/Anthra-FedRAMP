@@ -18,28 +18,101 @@ spec:
         app: anthra-api
         component: api
     spec:
-      # TODO: Create custom ServiceAccount with minimal RBAC
+      # AC-2: Dedicated ServiceAccount — no default SA, no automount
+      serviceAccountName: anthra-api
+      automountServiceAccountToken: false
+
+      # NIST 800-53 AC-6: Least Privilege (Pod-level hardening)
+      # AC-6(2): Non-privileged access for nonsecurity functions
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+
       containers:
         - name: api
+          # CM-2: Baseline Configuration (Pinned image version, no :latest)
+          image: anthra/api:v1.42.0
+          imagePullPolicy: IfNotPresent
+          
+          # NIST 800-53 AC-6: Least Privilege (Container-level hardening)
           securityContext:
-            allowPrivilegeEscalation: false
             runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            allowPrivilegeEscalation: false
+            # CM-2: Read-only root filesystem (using emptyDir for /tmp)
             readOnlyRootFilesystem: true
-          image: anthra/api:v1.42.0@sha256:e39edf7b8d492a2c6e33de78a1f7e09e19cc588efdd61007d04a3fc3ba173a95  # TODO: Pin to specific version tag
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+
           ports:
             - containerPort: 8080
               name: http
+          
+          # NIST 800-53 IA-5(7): No hardcoded secrets. Use secretKeyRef.
+          # SC-28: Protection of information at rest (encrypted Secrets)
           env:
             - name: DB_HOST
-              value: anthra-db
+              valueFrom:
+                secretKeyRef:
+                  name: anthra-db-credentials
+                  key: db-host
             - name: DB_PORT
-              value: "5432"
+              valueFrom:
+                secretKeyRef:
+                  name: anthra-db-credentials
+                  key: db-port
             - name: DB_NAME
-              value: anthra
+              valueFrom:
+                secretKeyRef:
+                  name: anthra-db-credentials
+                  key: db-name
             - name: DB_USER
-              value: anthra
+              valueFrom:
+                secretKeyRef:
+                  name: anthra-db-credentials
+                  key: db-user
             - name: DB_PASSWORD
-              value: anthra_default_pass_123  # TODO: Move to K8s Secret
-          # TODO: Add securityContext (runAsNonRoot, drop capabilities)
-          # TODO: Add resource limits
-          # TODO: Add liveness and readiness probes
+              valueFrom:
+                secretKeyRef:
+                  name: anthra-db-credentials
+                  key: db-password
+
+          # NIST 800-53 CM-2: Baseline Configuration (Resource limits)
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+          # NIST 800-53 SI-2: Flaw Remediation (Health Monitoring)
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          # NIST 800-53 SC-28: Mounted ephemeral storage for /tmp
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}

@@ -1,0 +1,111 @@
+# rbac.yaml
+# NIST 800-53 AC-2: Account Management
+# NIST 800-53 AC-3: Access Enforcement
+# NIST 800-53 AC-6: Least Privilege
+#
+# Pattern: each workload gets its own ServiceAccount with minimal permissions.
+# No workload uses the default ServiceAccount.
+# automountServiceAccountToken: false unless the pod actually needs K8s API access.
+
+# ── API ServiceAccount ────────────────────────────────────────────────────
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: anthra-api
+  namespace: anthra
+  labels:
+    app: anthra-api
+    control: AC-2
+automountServiceAccountToken: false
+
+---
+# ── DB ServiceAccount ─────────────────────────────────────────────────────
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: anthra-db
+  namespace: anthra
+  labels:
+    app: anthra-db
+    control: AC-2
+automountServiceAccountToken: false
+
+---
+# ── UI ServiceAccount ─────────────────────────────────────────────────────
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: anthra-ui
+  namespace: anthra
+  labels:
+    app: anthra-ui
+    control: AC-2
+automountServiceAccountToken: false
+
+---
+# ── Log-ingest ServiceAccount ─────────────────────────────────────────────
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: anthra-log-ingest
+  namespace: anthra
+  labels:
+    app: anthra-log-ingest
+    control: AC-2
+automountServiceAccountToken: false
+
+---
+# ── Role: read own secrets only (shared by API and log-ingest) ───────────
+# AC-6(1): Authorize access to security functions for privileged users only
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: anthra-secret-reader
+  namespace: anthra
+  labels:
+    control: AC-6
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames:
+      - anthra-db-credentials
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list"]
+
+---
+# ── RoleBinding: API → secret-reader ────────────────────────────────────
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: anthra-api-secret-reader
+  namespace: anthra
+  labels:
+    control: AC-6
+subjects:
+  - kind: ServiceAccount
+    name: anthra-api
+    namespace: anthra
+roleRef:
+  kind: Role
+  name: anthra-secret-reader
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# ── RoleBinding: log-ingest → secret-reader ─────────────────────────────
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: anthra-log-ingest-secret-reader
+  namespace: anthra
+  labels:
+    control: AC-6
+subjects:
+  - kind: ServiceAccount
+    name: anthra-log-ingest
+    namespace: anthra
+roleRef:
+  kind: Role
+  name: anthra-secret-reader
+  apiGroup: rbac.authorization.k8s.io

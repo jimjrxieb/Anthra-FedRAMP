@@ -1,29 +1,105 @@
-# NovaSec Cloud Log Ingest — DELIBERATELY INSECURE
+# Anthra Log Ingest — FedRAMP Hardened
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: novasec-log-ingest
-  namespace: novasec
+  name: anthra-log-ingest
+  namespace: anthra
+  labels:
+    app: anthra-log-ingest
+    component: ingest
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: novasec-log-ingest
+      app: anthra-log-ingest
   template:
     metadata:
       labels:
-        app: novasec-log-ingest
+        app: anthra-log-ingest
+        component: ingest
     spec:
+      # AC-2: Dedicated ServiceAccount — no default SA, no automount
+      serviceAccountName: anthra-log-ingest
+      automountServiceAccountToken: false
+
+      # NIST 800-53 AC-6: Least Privilege (Pod-level hardening)
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+
       containers:
         - name: log-ingest
-          image: novasec/log-ingest:latest  # VULN: mutable :latest tag
+          # CM-2: Baseline Configuration (Pinned image version)
+          image: anthra/log-ingest:v1.12.0
+          imagePullPolicy: IfNotPresent
+          
+          # NIST 800-53 AC-6: Least Privilege (Container-level hardening)
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+
           ports:
             - containerPort: 9090
+          
+          # NIST 800-53 IA-5(7): Use secretKeyRef for credentials
           env:
             - name: DB_HOST
-              value: novasec-db
+              valueFrom:
+                secretKeyRef:
+                  name: anthra-db-credentials
+                  key: db-host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: anthra-db-credentials
+                  key: db-port
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: anthra-db-credentials
+                  key: db-name
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: anthra-db-credentials
+                  key: db-user
             - name: DB_PASSWORD
-              value: novasec_insecure_password_123  # VULN: plaintext secret
-          # VULN: No securityContext
-          # VULN: No resource limits
-          # VULN: No probes
+              valueFrom:
+                secretKeyRef:
+                  name: anthra-db-credentials
+                  key: db-password
+
+          # NIST 800-53 CM-2: Baseline Configuration (Resource limits)
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+
+          # NIST 800-53 SI-2: Flaw Remediation (Health Monitoring)
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 5
+            periodSeconds: 10

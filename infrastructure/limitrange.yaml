@@ -1,0 +1,39 @@
+# limitrange.yaml
+# NIST 800-53 SC-5: Denial-of-Service Protection
+# NIST 800-53 CM-6: Configuration Settings
+#
+# Enforces resource limits at namespace level so no single pod can
+# consume unbounded CPU/memory and cause a denial-of-service for
+# other tenants on the node (SC-5) or deviate from the baseline (CM-6).
+#
+# Apply: kubectl apply -f infrastructure/limitrange.yaml
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: anthra-limitrange
+  namespace: anthra
+  labels:
+    control: SC-5
+spec:
+  limits:
+    # Container-level defaults and maximums
+    - type: Container
+      default:
+        cpu: "250m"
+        memory: "256Mi"
+      defaultRequest:
+        cpu: "100m"
+        memory: "128Mi"
+      max:
+        cpu: "2"
+        memory: "2Gi"
+      min:
+        cpu: "50m"
+        memory: "64Mi"
+
+    # Pod-level maximum (sum of all containers)
+    - type: Pod
+      max:
+        cpu: "4"
+        memory: "4Gi"

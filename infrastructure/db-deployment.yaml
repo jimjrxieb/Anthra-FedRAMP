@@ -1,31 +1,115 @@
-# NovaSec Cloud Database — DELIBERATELY INSECURE
+# Anthra Database — FedRAMP Hardened
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: novasec-db
-  namespace: novasec
+  name: anthra-db
+  namespace: anthra
+  labels:
+    app: anthra-db
+    component: database
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: novasec-db
+      app: anthra-db
   template:
     metadata:
       labels:
-        app: novasec-db
+        app: anthra-db
+        component: database
     spec:
+      # AC-2: Dedicated ServiceAccount — no default SA, no automount
+      serviceAccountName: anthra-db
+      automountServiceAccountToken: false
+
+      # NIST 800-53 AC-6: Least Privilege (Pod-level hardening)
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999  # Postgres default non-root user
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+
       containers:
         - name: postgres
-          image: postgres:15  # No digest pinning
+          # CM-2: Baseline Configuration (Pinned version)
+          image: postgres:15.6-alpine
+          imagePullPolicy: IfNotPresent
+          
+          # NIST 800-53 AC-6: Least Privilege (Container-level hardening)
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
+            allowPrivilegeEscalation: false
+            # Database needs write access to data volume, but root FS can be read-only
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+
           ports:
             - containerPort: 5432
+          
+          # NIST 800-53 IA-5(7): Use secretKeyRef for database credentials
           env:
             - name: POSTGRES_DB
-              value: novasec
+              valueFrom:
+                secretKeyRef:
+                  name: anthra-db-credentials
+                  key: db-name
             - name: POSTGRES_USER
-              value: novasec
+              valueFrom:
+                secretKeyRef:
+                  name: anthra-db-credentials
+                  key: db-user
             - name: POSTGRES_PASSWORD
-              value: novasec_insecure_password_123  # VULN: plaintext secret
-          # VULN: No securityContext
-          # VULN: No resource limits
-          # VULN: No persistent volume — data loss on restart
+              valueFrom:
+                secretKeyRef:
+                  name: anthra-db-credentials
+                  key: db-password
+            # NIST SC-28: Ensure postgres uses a temporary volume for its socket/lock files
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+
+          # NIST 800-53 CM-2: Baseline Configuration (Resource limits)
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+
+          # NIST 800-53 SI-2: Flaw Remediation (Health Monitoring)
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - anthra
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - anthra
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          volumeMounts:
+            - name: db-data
+              mountPath: /var/lib/postgresql/data
+            - name: tmp-volume
+              mountPath: /var/run/postgresql
+
+      volumes:
+        - name: db-data
+          emptyDir: {}  # In production, use PersistentVolumeClaim with encryption (SC-28)
+        - name: tmp-volume
+          emptyDir: {}

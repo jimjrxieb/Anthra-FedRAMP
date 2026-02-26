@@ -1,17 +1,43 @@
-# NovaSec Cloud Ingress — DELIBERATELY INSECURE
-# VULN: No TLS termination (SC-8 gap)
-# VULN: No rate limiting annotations
-# VULN: No WAF integration
+# ingress.yaml
+# NIST 800-53 SC-8: Transmission Confidentiality and Integrity
+# NIST 800-53 SC-7: Boundary Protection (single ingress point)
+#
+# TLS termination at the ingress controller.
+# HTTP → HTTPS redirect enforced via annotation.
+# cert-manager issues the certificate from Let's Encrypt (ACME).
+#
+# Prerequisites:
+#   kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+#   kubectl apply -f infrastructure/cluster-issuer.yaml  (see below)
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: novasec-ingress
-  namespace: novasec
-  # VULN: No TLS-redirect annotation
-  # VULN: No CORS restrictions
+  name: anthra-ingress
+  namespace: anthra
+  labels:
+    control: SC-8
+  annotations:
+    # SC-8: Force HTTPS — redirect any HTTP request to HTTPS
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # SC-8: TLS certificate managed by cert-manager
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # Rate limiting — mitigates DoS (SC-5)
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    # Prevent clickjacking (SC-8 hardening)
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      add_header X-Frame-Options "DENY" always;
+      add_header X-Content-Type-Options "nosniff" always;
+      add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - anthra.cloud
+      secretName: anthra-tls
   rules:
-    - host: novasec.example.com
+    - host: anthra.cloud
       http:
         paths:
           - path: /api
@@ -28,4 +54,20 @@ spec:
                 name: novasec-ui
                 port:
                   number: 80
-  # VULN: No tls: block — plaintext HTTP (SC-8 gap)
+---
+# ClusterIssuer — cert-manager ACME issuer for Let's Encrypt
+# Apply this once per cluster (not namespace-scoped)
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: security@anthra.cloud
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+      - http01:
+          ingress:
+            class: nginx

@@ -1,24 +1,88 @@
-# NovaSec Cloud UI — DELIBERATELY INSECURE
+# Anthra UI — FedRAMP Hardened
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: novasec-ui
-  namespace: novasec
+  name: anthra-ui
+  namespace: anthra
+  labels:
+    app: anthra-ui
+    component: ui
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: novasec-ui
+      app: anthra-ui
   template:
     metadata:
       labels:
-        app: novasec-ui
+        app: anthra-ui
+        component: ui
     spec:
+      # AC-2: Dedicated ServiceAccount — no default SA, no automount
+      serviceAccountName: anthra-ui
+      automountServiceAccountToken: false
+
+      # NIST 800-53 AC-6: Least Privilege (Pod-level hardening)
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+
       containers:
         - name: ui
-          image: novasec/ui:latest  # VULN: mutable :latest tag
+          # CM-2: Baseline Configuration (Pinned version)
+          image: anthra/ui:v1.0.0
+          imagePullPolicy: IfNotPresent
+          
+          # NIST 800-53 AC-6: Least Privilege (Container-level hardening)
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10001
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+
           ports:
             - containerPort: 80
-          # VULN: No securityContext
-          # VULN: No resource limits
-          # VULN: No probes
+          
+          # NIST 800-53 CM-2: Baseline Configuration (Resource limits)
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+
+          # NIST 800-53 SI-2: Flaw Remediation (Health Monitoring)
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          
+          # NIST SC-28: Mount tmp for Nginx if required
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+            - name: run-volume
+              mountPath: /var/run
+
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}
+        - name: run-volume
+          emptyDir: {}
