@@ -387,11 +387,32 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - name: Checkout
+      - name: Checkout Anthra repo
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
+
+      - name: Checkout JSA-DevSec from GP-Copilot
+        # Sparse-checkout only the jsa-devsec agent from the GP-Copilot monorepo.
+        # Required repo secrets:
+        #   GP_COPILOT_REPO  — e.g. "org/GP-copilot" (no https://)
+        #   GP_COPILOT_TOKEN — PAT with repo:read scope on GP-copilot
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.GP_COPILOT_REPO }}
+          token: ${{ secrets.GP_COPILOT_TOKEN }}
+          sparse-checkout: GP-BEDROCK-AGENTS/jsa-devsec
+          sparse-checkout-cone-mode: true
+          path: _jsa_src
+
+      - name: Stage JSA-DevSec
+        run: |
+          mkdir -p GP-BEDROCK-AGENTS
+          cp -r _jsa_src/GP-BEDROCK-AGENTS/jsa-devsec GP-BEDROCK-AGENTS/jsa-devsec
+          rm -rf _jsa_src
+          echo "JSA-DevSec staged at GP-BEDROCK-AGENTS/jsa-devsec"
+          ls GP-BEDROCK-AGENTS/jsa-devsec/
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -400,11 +421,11 @@ jobs:
 
       - name: Install JSA-DevSec
         run: |
-          pip install -r GP-BEDROCK-AGENTS/jsa-devsec/requirements.txt || true
+          pip install -r GP-BEDROCK-AGENTS/jsa-devsec/requirements.txt
 
       - name: Run JSA-DevSec Auto-Fix
         run: |
-          # Run auto-fix on D-rank findings
+          # Run auto-fix on D-rank findings (no AI, pattern NPCs only)
           python3 GP-BEDROCK-AGENTS/jsa-devsec/src/main.py fix \
             --target . \
             --auto-fix \
@@ -463,7 +484,7 @@ jobs:
     if: always()
     steps:
       - name: Download All Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.1.3
         with:
           path: security-results
 

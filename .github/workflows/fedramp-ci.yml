@@ -1,4 +1,4 @@
-name: FedRAMP Moderate CI — NovaSec Cloud
+name: FedRAMP Moderate CI — Anthra
 
 on:
   push:
@@ -48,7 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run Semgrep with NovaSec rules
+      - name: Run Semgrep with Anthra rules
         uses: returntocorp/semgrep-action@v1
         with:
           config: GP-Copilot/jsa-devsec/semgrep-rules.yaml

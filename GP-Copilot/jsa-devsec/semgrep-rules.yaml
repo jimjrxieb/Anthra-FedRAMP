@@ -1,0 +1,271 @@
+rules:
+  # ============================================================
+  # Anthra Security Platform — Custom Semgrep Rules
+  # NIST 800-53 Rev 5 | FedRAMP Moderate
+  # Consultant: GuidePoint Security / JSA-DevSec
+  # ============================================================
+
+  # ----------------------------------------------------------
+  # IA-5(1): Authenticator Management — Cryptographic Protection
+  # ----------------------------------------------------------
+
+  - id: anthra-md5-password-hashing
+    patterns:
+      - pattern: hashlib.md5(...)
+    message: |
+      [IA-5(1)] MD5 is cryptographically broken for password hashing.
+      FedRAMP IA-5(1) requires NIST-approved algorithms.
+      Fix: Use bcrypt (pip install passlib[bcrypt]):
+        from passlib.hash import bcrypt
+        bcrypt.hash(password, rounds=12)
+      For checksums (non-password): hashlib.sha256() is acceptable.
+    severity: ERROR
+    languages: [python]
+    metadata:
+      nist_control: "IA-5(1)"
+      cwe: "CWE-916"
+      fedramp_impact: HIGH
+      category: cryptography
+      checkov_id: CKV_SECRET_2
+
+  - id: anthra-weak-random
+    patterns:
+      - pattern: random.$FUNC(...)
+    message: |
+      [SC-13] Standard library random is NOT cryptographically secure.
+      FedRAMP SC-13 requires FIPS 140-2 approved cryptographic mechanisms
+      for security-sensitive operations (tokens, nonces, session IDs).
+      Fix: import secrets; secrets.token_hex(32)
+    severity: WARNING
+    languages: [python]
+    metadata:
+      nist_control: "SC-13"
+      cwe: "CWE-338"
+      fedramp_impact: MEDIUM
+      category: cryptography
+
+  # ----------------------------------------------------------
+  # IA-5(7): Authenticator Management — No Embedded Secrets
+  # ----------------------------------------------------------
+
+  - id: anthra-hardcoded-password-python
+    patterns:
+      - pattern: $VAR = "$VALUE"
+      - metavariable-regex:
+          metavariable: $VAR
+          regex: (?i)(password|passwd|secret|api_key|access_token|private_key|credential)
+      - metavariable-regex:
+          metavariable: $VALUE
+          regex: ^(?!.*os\.environ)(?!.*getenv)(?!\$\{)[a-zA-Z0-9!@#$%^&*_\-]{8,}$
+    message: |
+      [IA-5(7)] Hardcoded credential detected in Python source.
+      FedRAMP IA-5(7) prohibits embedded authenticators.
+      Fix: Use environment variables or K8s Secrets:
+        import os
+        $VAR = os.environ.get("$VAR_UPPER")
+      In K8s: configure secretKeyRef in deployment manifest.
+    severity: ERROR
+    languages: [python]
+    metadata:
+      nist_control: "IA-5(7)"
+      cwe: "CWE-798"
+      fedramp_impact: CRITICAL
+      category: secrets
+
+  # ----------------------------------------------------------
+  # SC-7(5): Boundary Protection — Deny by Default / CORS
+  # ----------------------------------------------------------
+
+  - id: anthra-cors-wildcard
+    patterns:
+      - pattern: CORSMiddleware(..., allow_origins=["*"], ...)
+    message: |
+      [SC-7(5)] Wildcard CORS origin allows any domain to make cross-origin requests.
+      FedRAMP SC-7(5) requires deny-by-default boundary protection.
+      Fix: Restrict to approved origins:
+        allow_origins=["https://anthra.cloud", "https://app.anthra.cloud"]
+    severity: ERROR
+    languages: [python]
+    metadata:
+      nist_control: "SC-7(5)"
+      cwe: "CWE-942"
+      fedramp_impact: HIGH
+      category: network
+
+  # ----------------------------------------------------------
+  # SI-11: Error Handling — No Information Leakage
+  # ----------------------------------------------------------
+
+  - id: anthra-stack-trace-in-response
+    patterns:
+      - pattern: |
+          return {..., "traceback": traceback.format_exc(), ...}
+      - pattern: |
+          return JSONResponse({"detail": str($E), ...})
+    message: |
+      [SI-11] Exception details in HTTP response may leak implementation info.
+      FedRAMP SI-11 requires error handling that avoids revealing sensitive details.
+      Fix: Return generic messages; log details server-side only:
+        logger.exception("Unhandled error")
+        return JSONResponse({"error": "Internal server error"}, status_code=500)
+    severity: WARNING
+    languages: [python]
+    metadata:
+      nist_control: "SI-11"
+      cwe: "CWE-209"
+      fedramp_impact: MEDIUM
+      category: error-handling
+
+  # ----------------------------------------------------------
+  # SC-28: Protection of Information at Rest — Temp Files
+  # ----------------------------------------------------------
+
+  - id: anthra-insecure-tmp-path
+    patterns:
+      - pattern: |
+          $VAR = "/tmp/$FILE"
+      - pattern: |
+          open("/tmp/$FILE", ...)
+    message: |
+      [SC-28] Hardcoded /tmp path may expose sensitive data.
+      FedRAMP SC-28 requires protection of information at rest.
+      Fix: Use tempfile.mkstemp() for temporary files, or in K8s
+      mount an emptyDir volume for the /tmp path in the deployment spec.
+    severity: WARNING
+    languages: [python]
+    metadata:
+      nist_control: "SC-28"
+      cwe: "CWE-377"
+      fedramp_impact: MEDIUM
+      category: data-protection
+
+  # ----------------------------------------------------------
+  # AC-6: Least Privilege — K8s runAsNonRoot
+  # ----------------------------------------------------------
+
+  - id: anthra-k8s-run-as-root
+    patterns:
+      - pattern: |
+          securityContext:
+            runAsNonRoot: false
+    message: |
+      [AC-6] Container explicitly configured to run as root.
+      FedRAMP AC-6 (Least Privilege) requires containers to run as
+      non-root users. Set runAsNonRoot: true and runAsUser: <non-zero UID>.
+    severity: ERROR
+    languages: [yaml]
+    metadata:
+      nist_control: "AC-6"
+      cwe: "CWE-250"
+      fedramp_impact: HIGH
+      category: container-security
+      checkov_id: CKV_K8S_28
+
+  - id: anthra-k8s-privilege-escalation-allowed
+    patterns:
+      - pattern: |
+          securityContext:
+            allowPrivilegeEscalation: true
+    message: |
+      [AC-6] allowPrivilegeEscalation: true permits container privilege escalation.
+      FedRAMP AC-6 requires least privilege. Set allowPrivilegeEscalation: false.
+    severity: ERROR
+    languages: [yaml]
+    metadata:
+      nist_control: "AC-6"
+      cwe: "CWE-269"
+      fedramp_impact: HIGH
+      category: container-security
+      checkov_id: CKV_K8S_20
+
+  # ----------------------------------------------------------
+  # SC-7: Boundary Protection — NodePort Exposure
+  # ----------------------------------------------------------
+
+  - id: anthra-k8s-nodeport-service
+    patterns:
+      - pattern: |
+          spec:
+            type: NodePort
+    message: |
+      [SC-7] NodePort service type exposes the port on all cluster nodes.
+      FedRAMP SC-7 requires boundary protection via controlled access points.
+      Fix: Use ClusterIP + Ingress with TLS termination for external traffic.
+        spec:
+          type: ClusterIP
+      Then route external traffic through an Ingress with TLS.
+    severity: ERROR
+    languages: [yaml]
+    metadata:
+      nist_control: "SC-7"
+      cwe: "CWE-668"
+      fedramp_impact: CRITICAL
+      category: network
+
+  # ----------------------------------------------------------
+  # SC-8: Transmission Confidentiality — TLS Required
+  # ----------------------------------------------------------
+
+  - id: anthra-go-http-no-tls
+    patterns:
+      - pattern: http.ListenAndServe($ADDR, $HANDLER)
+    message: |
+      [SC-8] HTTP server without TLS. FedRAMP SC-8 requires transmission
+      confidentiality for all network communications.
+      Fix: Use TLS at the service level or terminate at Ingress:
+        http.ListenAndServeTLS(addr, certFile, keyFile, handler)
+      In K8s: configure Ingress with cert-manager TLS secret.
+    severity: ERROR
+    languages: [go]
+    metadata:
+      nist_control: "SC-8"
+      cwe: "CWE-319"
+      fedramp_impact: HIGH
+      category: encryption
+
+  # ----------------------------------------------------------
+  # CM-2: Baseline Configuration — Dockerfile Standards
+  # ----------------------------------------------------------
+
+  - id: anthra-dockerfile-no-healthcheck
+    pattern: |
+      FROM $IMAGE
+    message: |
+      [CM-2] Dockerfile missing HEALTHCHECK instruction. FedRAMP CM-2 requires
+      documented baseline configurations including container health monitoring.
+      Add before the final CMD:
+        HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+          CMD curl -f http://localhost:8080/api/health || exit 1
+    severity: WARNING
+    languages: [dockerfile]
+    metadata:
+      nist_control: "CM-2"
+      fedramp_impact: LOW
+      category: container-security
+
+  - id: anthra-dockerfile-root-user
+    patterns:
+      - pattern: |
+          FROM $IMAGE
+          ...
+          CMD $CMD
+      - pattern-not: |
+          FROM $IMAGE
+          ...
+          USER $USER
+          ...
+          CMD $CMD
+    message: |
+      [AC-6] Dockerfile runs as root (no USER instruction found).
+      FedRAMP AC-6 requires least privilege for all processes.
+      Add a non-root user before CMD:
+        RUN useradd --uid 10001 --no-create-home appuser
+        USER 10001
+    severity: ERROR
+    languages: [dockerfile]
+    metadata:
+      nist_control: "AC-6"
+      cwe: "CWE-250"
+      fedramp_impact: HIGH
+      category: container-security
+      checkov_id: CKV_DOCKER_2

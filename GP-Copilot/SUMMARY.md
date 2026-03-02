@@ -38,9 +38,12 @@ Anthra-FedRAMP/GP-Copilot/
 │   │   └── 03-md5-to-bcrypt.py        # Replace MD5 with bcrypt
 │   └── scanner-outputs/               # Raw scanner outputs (empty)
 │
-├── opa-package/                        # Admission control policies (12 KB)
-│   ├── require-security-context.yaml  # OPA Gatekeeper: Block pods without securityContext
-│   └── block-latest-tags.yaml         # Kyverno: Block :latest image tags
+├── opa-package/                        # Admission control policies (28 KB)
+│   ├── require-security-context.yaml  # Gatekeeper: Block pods without securityContext (AC-6)
+│   ├── block-latest-tags.yaml         # Kyverno: Block :latest image tags (CM-2)
+│   ├── 03-prohibit-insecure-services.rego # Conftest: Block NodePort/LoadBalancer (SC-7)
+│   ├── 04-prohibit-host-path-mounts.yaml  # Gatekeeper: Block hostPath mounts (AC-6)
+│   └── 05-require-resource-limits.rego    # Conftest: Force resource limits (CM-2)
 │
 ├── fedRAMP-package/                    # Compliance documentation (16 KB)
 │   └── SSP-APPENDIX-A-FINDINGS.md     # SSP Appendix: Pre-engagement findings

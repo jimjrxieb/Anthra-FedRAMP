@@ -1,33 +1,19 @@
-# DVWA target app config
-target-app/config/config.inc.php.bak
-target-app/config/config.inc.php
-
-# Vim swap files
-.*swp
-
-# VS Code editor files
-*.code-workspace
+# JADE backup files
+*.jade_backup
+*.bak
 
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-.pytest_cache/
+*.pyc
+.venv/
 
-# Don't include any uploaded images
-target-app/hackable/uploads/*
+# IDE
+.vscode/
+.idea/
 
-# Scan output (generated, not committed)
-evidence/scan-reports/nist-mapping-report.json
-evidence/scan-reports/trivy-latest.json
-evidence/scan-reports/sbom-latest.json
-
-# Conftest output
-conftest-results.json
-
-# OS files
+# OS
 .DS_Store
 Thumbs.db
 
-# Build progress tracker (remove before final push)
-BUILD_PROGRESS.md
+# Evidence (generated, not committed)
+evidence-*/

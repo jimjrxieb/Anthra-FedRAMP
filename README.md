@@ -145,34 +145,64 @@ GuidePoint's JSA (Junior Security Agent) agents automate:
 
 ```
 Anthra-FedRAMP/
-├── README.md                    # This file
-├── docker-compose.yml           # Local development stack
-├── api/                         # Python FastAPI application
-│   ├── Dockerfile
-│   ├── main.py                  # API server
+├── README.md                        # This file
+├── PRE-DEPLOYMENT-IMPLEMENTATION.md # Full implementation guide
+├── docker-compose.yml               # Local development stack (intentionally insecure)
+├── .bandit.yaml                     # Bandit Python SAST config
+├── .hadolint.yaml                   # Hadolint Dockerfile linting config
+├── .yamllint.yaml                   # YAML style validation config
+├── .pre-commit-config.yaml          # Pre-commit hooks (8 validators)
+│
+├── .github/workflows/               # CI/CD security pipelines
+│   ├── security-pipeline.yml        # Main pipeline — 9 jobs (Gitleaks, Semgrep, Trivy, etc.)
+│   ├── fedramp-ci.yml               # FedRAMP-specific gate (Trivy, Semgrep, Conftest, Kyverno)
+│   └── compliance-report.yml        # Weekly CA-7 compliance report (Phase 2 stub)
+│
+├── api/                             # Python FastAPI application
+│   ├── Dockerfile                   # Intentionally insecure (demo baseline)
+│   ├── main.py                      # API server (bcrypt implemented, other gaps remain)
 │   └── requirements.txt
-├── services/                    # Go log-ingest microservice
+├── services/                        # Go log-ingest microservice
 │   ├── Dockerfile
-│   ├── main.go
-│   └── go.mod
-├── ui/                          # React dashboard
+│   └── main.go
+├── ui/                              # React dashboard
 │   ├── Dockerfile
-│   ├── package.json
 │   └── src/
-├── infrastructure/              # Kubernetes manifests
-│   ├── namespace.yaml
-│   ├── api-deployment.yaml
-│   ├── ui-deployment.yaml
-│   ├── log-ingest-deployment.yaml
-│   ├── db-deployment.yaml
-│   ├── services.yaml
-│   └── ingress.yaml
-├── db/                          # Database initialization
+├── infrastructure/                  # Kubernetes manifests
+│   ├── namespace.yaml               # ✅ PSS restricted enforce/audit/warn
+│   ├── api-deployment.yaml          # ✅ Fully hardened (non-root, caps dropped, limits)
+│   ├── ui-deployment.yaml           # ✅ Fully hardened
+│   ├── db-deployment.yaml           # ✅ Fully hardened (UID 999)
+│   ├── log-ingest-deployment.yaml   # ✅ Fully hardened
+│   ├── services.yaml                # ❌ NodePort (SC-7 gap — intentional demo)
+│   ├── secret.yaml                  # ⚠️  Base64 creds (rotate before prod)
+│   └── ingress.yaml                 # ❌ No TLS (SC-8 gap — Phase 2 fix)
+├── db/                              # Database initialization
 │   └── init.sql
-└── docs/                        # Engagement documentation
-    ├── COMPANY-PROFILE.md       # Anthra background
-    ├── ARCHITECTURE.md          # System design
-    └── FEDRAMP-SCOPE.md         # Compliance scope
+├── docs/                            # Engagement documentation
+│   └── COMPANY-PROFILE.md           # Anthra background
+│
+└── GP-Copilot/                      # GuidePoint Iron Legion artifacts
+    ├── SUMMARY.md                   # Executive summary
+    ├── jsa-devsec/                  # JSA-DevSec scan artifacts
+    │   ├── README.md
+    │   ├── semgrep-rules.yaml       # ✅ Custom FedRAMP Semgrep rules (14 rules)
+    │   ├── gitleaks.toml            # ✅ Custom Gitleaks config + allowlist
+    │   ├── conftest-runner.sh       # ✅ OPA Conftest runner script
+    │   ├── findings/                # 41 JSON finding files (D-rank)
+    │   ├── reports/                 # SCAN-REPORT-2026-02-12.md
+    │   └── remediations/            # Fix templates (3 files)
+    ├── opa-package/                 # OPA/Kyverno admission policies
+    │   ├── require-security-context.yaml   # AC-6 (Gatekeeper)
+    │   ├── block-latest-tags.yaml          # CM-2 (Kyverno)
+    │   ├── rego/                           # Conftest policies
+    │   │   ├── 03-prohibit-insecure-services.rego
+    │   │   └── 05-require-resource-limits.rego
+    │   └── tests/                          # OPA unit tests
+    ├── fedRAMP-package/
+    │   └── SSP-APPENDIX-A-FINDINGS.md      # 3PAO-ready SSP appendix
+    └── summaries/
+        └── remediation_summary_20260224.md
 ```
 
 ---
@@ -198,26 +228,62 @@ Anthra-FedRAMP/
 
 Using their Iron Legion platform (`GP-CONSULTING/07-FedRAMP-Ready/`):
 
-### Pre-Deployment (JSA-DevSec)
-- ✅ Trivy container scanning
-- ✅ Semgrep SAST analysis
-- ✅ Gitleaks secret detection
-- ✅ Conftest policy validation
-- ✅ Automated remediation
+### Phase 1 — Pre-Deployment (JSA-DevSec) ✅ COMPLETE
+- ✅ Trivy container + dependency scanning (CVE-2024-24762 patched)
+- ✅ Semgrep SAST — 14 custom FedRAMP rules deployed
+- ✅ Gitleaks secret detection — custom Anthra ruleset + allowlist
+- ✅ Conftest OPA policy validation — conftest-runner.sh wired
+- ✅ GitHub Actions CI/CD pipeline — 9 security jobs
+- ✅ JSA-DevSec auto-fix loop — D-rank pattern remediation on PR
+- ✅ Pre-commit hooks — 8 validators shift-left
+- ✅ OPA/Kyverno admission policies deployed
 
-### Runtime (JSA-InfraSec)
-- ✅ Kyverno admission policies
-- ✅ Gatekeeper OPA constraints
-- ✅ Falco runtime monitoring
-- ✅ NetworkPolicy enforcement
-- ✅ Automatic incident response
+### Phase 2 — Runtime Security (JSA-InfraSec) ⏭️ NEXT
+- ⏭️ Falco runtime threat detection
+- ⏭️ NetworkPolicy (namespace isolation)
+- ⏭️ Ingress TLS (cert-manager, SC-8)
+- ⏭️ Service type migration (NodePort → ClusterIP + Ingress)
+- ⏭️ Automatic incident response
 
-### Compliance (JSA-SecOps)
-- ✅ NIST 800-53 control mapping
-- ✅ SSP generation (System Security Plan)
-- ✅ POA&M tracking (Plan of Action & Milestones)
-- ✅ Evidence collection (automated artifacts)
-- ✅ Continuous monitoring
+### Phase 3 — Compliance Automation (JSA-SecOps) ⏭️ PLANNED
+- ⏭️ NIST 800-53 control mapping (scan-and-map.py)
+- ⏭️ SSP generation (System Security Plan)
+- ⏭️ POA&M tracking (Plan of Action & Milestones)
+- ⏭️ Evidence collection pipeline (evidence-collector.sh)
+- ⏭️ Continuous monitoring dashboard
+
+---
+
+## CI/CD Pipeline Setup
+
+Two pipelines are active. Both require GitHub repo secrets to run JSA-DevSec auto-fix:
+
+### Required Secrets (GitHub → Settings → Secrets → Actions)
+
+| Secret | Value | Purpose |
+|--------|-------|---------|
+| `GP_COPILOT_REPO` | `org/GP-copilot` | GP-Copilot monorepo location |
+| `GP_COPILOT_TOKEN` | PAT (repo:read) | Access to pull JSA-DevSec agent |
+
+### Pipeline Overview
+
+| Workflow | Trigger | Jobs | Purpose |
+|----------|---------|------|---------|
+| `security-pipeline.yml` | push, PR, daily 2AM | 9 | Full FedRAMP gate + JSA auto-fix |
+| `fedramp-ci.yml` | push main, PR | 5 | Fast FedRAMP control checks |
+| `compliance-report.yml` | weekly Mon 6AM | 1 | CA-7 evidence collection (Phase 3) |
+
+### JSA Auto-Fix Loop (on PR)
+
+```
+Developer opens PR
+  → secrets-scan (Gitleaks) — blocks if secrets found
+  → sast-scan (Semgrep + Bandit) — SARIF to GitHub Security tab
+  → dependency-scan (Trivy) — blocks on CRITICAL/HIGH CVEs
+  → jsa-auto-fix (JSA-DevSec D-rank) — commits fixes, comments on PR
+  → Policy validation (Conftest OPA)
+  → security-report — uploads 90-day evidence artifacts
+```
 
 ---
 
