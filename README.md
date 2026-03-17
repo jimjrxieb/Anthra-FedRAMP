@@ -5,7 +5,11 @@
 **Consultant:** Ghost Protocol (LinkOps Industries)
 **Objective:** Achieve FedRAMP Moderate authorization to sell to federal agencies (DHS, VA, GSA)
 
-> **DEMO CONTEXT:** This is a realistic FedRAMP engagement. Security gaps in the BEFORE state are intentional — they represent a startup that built for speed and now needs federal hardening. GP-Copilot packages remediate these gaps.
+> **BEFORE STATE — INTENTIONALLY BROKEN**
+>
+> This repository represents the **BEFORE** state of a FedRAMP engagement. The security gaps below are **real and intentional** — no auth middleware, XSS in search (`dangerouslySetInnerHTML`), MD5 passwords, hardcoded secrets, no RBAC, no audit trail, permissive CORS, containers running as root, no NetworkPolicy, no TLS. These are the exact gaps a startup has after building for speed-to-market. **Do not file bugs against these — they are the point.**
+>
+> The **AFTER** state is produced by running GP-Copilot packages (01-APP-SEC → 02-CLUSTER-HARDENING → 03-DEPLOY-RUNTIME → 07-FEDRAMP-READY) against this codebase. The dashboard, scan data, and compliance metrics below show the engagement in progress.
 
 ---
 
