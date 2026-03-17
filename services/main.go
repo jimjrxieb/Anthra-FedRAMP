@@ -27,10 +27,10 @@ import (
 // Values are injected via Kubernetes Secrets.
 var (
 	dbHost = os.Getenv("DB_HOST")
-	dbPort = os.getenv("DB_PORT")
-	dbName = os.getenv("DB_NAME")
-	dbUser = os.getenv("DB_USER")
-	dbPass = os.getenv("DB_PASSWORD")
+	dbPort = os.Getenv("DB_PORT")
+	dbName = os.Getenv("DB_NAME")
+	dbUser = os.Getenv("DB_USER")
+	dbPass = os.Getenv("DB_PASSWORD")
 )
 
 func main() {
@@ -110,7 +110,7 @@ func ingestHandler(db *sql.DB) http.HandlerFunc {
 		// Store in database
 		if db != nil {
 			_, err := db.Exec(
-				"INSERT INTO logs (tenant_id, level, message, source, timestamp) VALUES ($1, $2, $3, $4, $5)",
+				"INSERT INTO logs (tenant_id, level, message, source, created_at) VALUES ($1, $2, $3, $4, $5)",
 				event.TenantID,
 				event.Level,
 				event.Message,

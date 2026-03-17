@@ -114,7 +114,7 @@ deny[msg] {
 }
 
 has_image_signature(image) {
-    input.metadata.annotations["images.guidepoint.io/signature-verified"] == "true"
+    input.metadata.annotations["images.ghostprotocol.io/signature-verified"] == "true"
 }
 
 has_image_signature(image) {
@@ -165,8 +165,8 @@ warn[msg] {
 }
 
 has_scan_annotation {
-    input.metadata.annotations["images.guidepoint.io/scan-date"]
-    input.metadata.annotations["images.guidepoint.io/scan-status"] == "passed"
+    input.metadata.annotations["images.ghostprotocol.io/scan-date"]
+    input.metadata.annotations["images.ghostprotocol.io/scan-status"] == "passed"
 }
 
 # LOW: Distroless/minimal image recommendation
@@ -197,5 +197,5 @@ is_production {
 }
 
 is_exempted {
-    input.metadata.annotations["security.guidepoint.io/image-exemption"] == "true"
+    input.metadata.annotations["security.ghostprotocol.io/image-exemption"] == "true"
 }

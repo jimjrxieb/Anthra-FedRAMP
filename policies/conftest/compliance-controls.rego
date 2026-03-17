@@ -55,7 +55,7 @@ deny[msg] {
 }
 
 has_encryption_at_rest {
-    input.metadata.annotations["encryption.guidepoint.io/at-rest"] == "true"
+    input.metadata.annotations["encryption.ghostprotocol.io/at-rest"] == "true"
 }
 
 # HIGH: Audit logging requirements
@@ -74,7 +74,7 @@ is_sensitive_resource {
 }
 
 has_audit_logging_enabled {
-    input.metadata.annotations["logging.guidepoint.io/audit-enabled"] == "true"
+    input.metadata.annotations["logging.ghostprotocol.io/audit-enabled"] == "true"
 }
 
 # HIGH: Retention policy enforcement
@@ -82,7 +82,7 @@ has_audit_logging_enabled {
 # THREAT: Data retention violations, storage costs
 warn[msg] {
     input.kind == "Secret"
-    not input.metadata.annotations["retention.guidepoint.io/expiry-date"]
+    not input.metadata.annotations["retention.ghostprotocol.io/expiry-date"]
     msg := sprintf("Secret '%v' must have retention/expiry date annotation", [input.metadata.name])
 }
 
@@ -98,8 +98,8 @@ deny[msg] {
 }
 
 has_change_ticket {
-    input.metadata.annotations["change.guidepoint.io/ticket-id"]
-    input.metadata.annotations["change.guidepoint.io/approved-by"]
+    input.metadata.annotations["change.ghostprotocol.io/ticket-id"]
+    input.metadata.annotations["change.ghostprotocol.io/approved-by"]
 }
 
 # MEDIUM: Environment segregation
@@ -167,8 +167,8 @@ is_stateful_resource {
 }
 
 has_backup_policy {
-    input.metadata.annotations["backup.guidepoint.io/enabled"] == "true"
-    input.metadata.annotations["backup.guidepoint.io/retention-days"]
+    input.metadata.annotations["backup.ghostprotocol.io/enabled"] == "true"
+    input.metadata.annotations["backup.ghostprotocol.io/retention-days"]
 }
 
 # HIGH: Access control review
@@ -182,7 +182,7 @@ warn[msg] {
 }
 
 has_access_review_date {
-    review_date := input.metadata.annotations["rbac.guidepoint.io/last-review-date"]
+    review_date := input.metadata.annotations["rbac.ghostprotocol.io/last-review-date"]
     is_recent_review(review_date)
 }
 

@@ -160,7 +160,7 @@ deny[msg] {
 
 needs_api_access {
     # Allow if explicitly annotated
-    input.metadata.annotations["security.guidepoint.io/needs-api-access"] == "true"
+    input.metadata.annotations["security.ghostprotocol.io/needs-api-access"] == "true"
 }
 
 # MEDIUM: Secret rotation metadata
@@ -169,6 +169,6 @@ needs_api_access {
 warn[msg] {
     input.kind == "Secret"
     input.type in ["Opaque", "kubernetes.io/basic-auth", "kubernetes.io/tls"]
-    not input.metadata.annotations["secret.guidepoint.io/rotation-date"]
+    not input.metadata.annotations["secret.ghostprotocol.io/rotation-date"]
     msg := sprintf("Secret '%v' missing rotation date annotation", [input.metadata.name])
 }
